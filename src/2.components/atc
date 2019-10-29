@@ -1,0 +1,76 @@
+ (id, name, price, picture, description, qty) => {
+        
+        qty = this.state.addQuantity
+
+        console.log(qty);
+        
+
+        // let addedQuantity = this.state.currQuantity + this.state.addQuantity
+
+        axios.get(
+            'http://localhost:2019/products'
+
+        ).then((res) => {      
+            
+            let indexofID = id - 1
+
+            console.log(res.data[indexofID].id);
+            
+
+            if(qty === 0){
+
+                this.setState({loading: false, error: `Please input the amount of quantity`})
+            } 
+            
+            else {
+            
+
+                if(res.data[indexofID].qty > 0){
+
+                    console.log(qty);
+                    
+                    axios.patch(
+                        `http://localhost:2019/cart/${id}`,
+                        {
+                            qty: this.state.addQuantity
+                        }
+                    )
+                } else {
+
+                    this.setState(
+                        {
+                            selectedId: id,
+                            selectedName: name,
+                            selectedDesc: description,
+                            selectedPrice: price,
+                            selectedPict: picture,
+                            currQuantity: qty,
+                        }
+                    )
+                    
+                    axios.post(
+                        'http://localhost:2019/cart',
+                        {
+                            id: this.state.selectedId,
+                            name: this.state.selectedName,
+                            description: this.state.selectedDesc,
+                            price: this.state.selectedPrice,
+                            picture: this.state.selectedPict,
+                            qty: this.state.currQuantity
+                        }
+                    ).then((res) => {
+                        Swal.fire(
+                            'Done!',
+                            'Product is added succesfully!',
+                            'success'
+                        )
+        
+                    }).catch((err) => {
+                        console.log(err)
+                        alert('Gagal, coba buka console')
+        
+                    })
+                }
+            }
+        }
+    }

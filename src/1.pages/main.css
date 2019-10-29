@@ -1,0 +1,21 @@
+ul li a {
+    color: white;
+}
+
+ul li a:hover{
+    color: red;
+    text-decoration: none;
+}
+
+div p {
+    font-size: 0.8em;
+}
+
+.footer-email {
+    color: white;
+}
+
+.footer-email:hover {
+    color: red;
+    text-decoration: none;
+}

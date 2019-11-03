@@ -1,6 +1,6 @@
 Project Overview
 
-Website for Omega
+Website for Omega :
 Omega is a fake clothing brand with medium-sized office based in Indonesia. The company could ship their products to Singapore and Malaysia. 
 
 Objective :

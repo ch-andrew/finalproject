@@ -53,7 +53,9 @@ class App extends Component {
                 </div>
             )
         } else {
-            return <div><h1 className="text-center">Loading</h1></div>
+            return  <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
         }
     }
 }

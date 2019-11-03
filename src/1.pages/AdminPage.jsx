@@ -35,6 +35,6 @@ const mapStateToProps = (state) => {
         error : state.user.error,
         account : state.user.account
     }
-  }
+}
 
   export default connect(mapStateToProps)(AdminPage)

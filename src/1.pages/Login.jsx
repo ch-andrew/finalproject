@@ -25,9 +25,10 @@ class Login extends Component {
     loadingButton = () => {
         if(this.props.isLoading){
             return (
-                <div className="spinner-grow" role='status'>
-                    <span className="sr-only"></span>
-                </div>
+                <button className="btn-block btn btn-success mb-2" type="button" disabled>
+                    <span className="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"></span>
+                    Logging In...
+                </button>
                 
             )
         }

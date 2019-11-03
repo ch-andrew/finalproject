@@ -29,7 +29,7 @@ class ManageProducts extends Component {
     // Mengambil (GET) data dari database
     getData = () => {
         Axios.get(
-            'http://localhost:2077/products/all'
+            'http://localhost:2077/products/list'
 
         ).then((res) => {
             // Di taruh di state.data

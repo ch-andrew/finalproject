@@ -3,6 +3,7 @@ import {Link} from 'react-router-dom'
 import axios from 'axios';
 // import Swal from 'sweetalert2'
 import {connect} from 'react-redux'
+import './sub.css'
 
 
 class ProductItem extends Component {
@@ -66,21 +67,19 @@ class ProductItem extends Component {
     }
 
     render() {
-        let {id, name, price, picture} = this.props.barang
+        let {id, name, defaultImage} = this.props.product
 
         return (
-            <div className='card col-sm-3 my-4' >
-                <img src={picture} className='card-img-top' alt=""/>
-                <div className='card-body'>
-                    <p className='card-title mb-2'>{name}</p>
-                    <p className='card-text mb-2'>Rp. {price}</p>
-                    {/* <input className='form-control mb-2' type="number" placeholder="Quantity" onInput={(e)=>{this.setState({addQuantity: parseInt(e.target.value)})}}/> */}
-                    {this.notification()}
-                    <Link to={`/productdetail/${id}`}>
-                        <button className='btn btn-block btn-outline-primary mt-2'>Detail</button>
-                    </Link>
-                    {/* <button className='btn btn-block btn-outline-primary' onClick={() => this.AddtoCart(id, name, price, picture, description, qty)}>Add To Cart</button> */}
+            <div className='card col-sm-3 my-4' style={{border: 'none'}}>
+                <Link to={`/productdetail/${id}`}>
+                <div className='product-card'>
+                    <img src={defaultImage} className='card-img-top' alt=""/>
+                    <div className='card-body'>
+                    <p className='card-title text-center' style={{fontSize: '1rem'}}>{name}</p>
                 </div>
+
+                </div>
+                </Link>
             </div>
         )
     }
@@ -88,10 +87,15 @@ class ProductItem extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        user_name : state.auth.username,
-        user_id : state.auth.id
+        id : state.user.id,
+        email : state.user.email,
+        firstName : state.user.firstName,
+        lastName : state.user.lastName,
+        isLoading : state.user.loading,
+        success : state.user.success,
+        error : state.user.error,
+        account : state.user.account
     }
-    
 }
 
 export default connect(mapStateToProps)(ProductItem)

@@ -3,7 +3,7 @@ const db = require('../database')
 module.exports = {
     getProducts: (req, res) => {
 
-        let sql = `select id, products.name, description, c.name as category, gender from products
+        let sql = `select id, products.name, description, c.name as category, gender, defaultImage from products
                     join categories c on c.catId = products.categoryId`
 
         db.query(sql, (err,result) => {

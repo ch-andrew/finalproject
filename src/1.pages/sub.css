@@ -1,0 +1,15 @@
+.product-card {
+    border: none;
+    color: black;
+    font-family: 'Open Sans' sans-serif;
+}
+
+.product-card:hover {
+    color: black;
+    text-decoration: none
+}
+
+.product-card:active{
+    border: none;
+    color:blue;
+}

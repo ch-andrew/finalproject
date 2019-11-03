@@ -14,6 +14,7 @@ Roadmap :
 - Search and Filtering
 - Pagination
 - Responsive
+- Display Currency based on Selected Region
 - Customer Features :
   - My Account (Customer Details)
   - Add to cart

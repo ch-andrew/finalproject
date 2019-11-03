@@ -6,27 +6,15 @@ import Register from '../1.pages/Register'
 import Login from '../1.pages/Login'
 import Home from '../1.pages/Home'
 import Header from '../1.pages/Header'
-import ManageProducts from '../1.pages/ManageProducts'
 import ProductDetail from '../1.pages/ProductDetail'
 import ShoppingCart from '../1.pages/ShoppingCart'
 import ShopAll from '../1.pages/ShopAll'
 import ShopMen from '../1.pages/Shop Men/ShopMen'
 import ShopWomen from '../1.pages/Shop Women/ShopWomen'
+import AdminPage from '../1.pages/AdminPage'
 
-
-import Dashboard from './Dashboard'
 import { connect } from 'react-redux';
-
-// Action Creator
-const keepLogin = (objUser) => {
-    return {
-        type: 'LOGIN_SUCCESS',
-        payload: {
-            id: objUser.id,
-            username: objUser.username,
-        }
-    }
-}
+import {keepLogin} from '../redux/actions'
 
 class App extends Component {
     
@@ -37,7 +25,7 @@ class App extends Component {
     componentDidMount() {
         // check local storage
         let userStorage = JSON.parse(localStorage.getItem('userData'))
-
+        
         if(userStorage){
             // kirim ke redux
             this.props.keepLogin(userStorage)
@@ -49,19 +37,20 @@ class App extends Component {
     render() {
         if(this.state.check){
             return (
+                <div>
                 <BrowserRouter>
                     <Header/>
                     <Route path='/' exact component={Home}/>
-                    <Route path='/register' component={Register} />
-                    <Route path='/login' component={Login} />
-                    <Route path='/manageproducts' component={ManageProducts} />
-                    <Route path='/productdetail/:id' component={ProductDetail}/>
-                    <Route path='/shoppingcart' component={ShoppingCart}/>
-                    <Route path='/dashboard' component={Dashboard}/>
-                    <Route path='/shop/all' component={ShopAll}/>
-                    <Route path='/shop/men' component={ShopMen}/>
-                    <Route path='/shop/women' component={ShopWomen}/>
+                    <Route path='/register' exact component={Register}/>
+                    <Route path='/login'exact component={Login}/>
+                    <Route path='/admin' exact component={AdminPage}/>
+                    <Route path='/productdetail/:id' exact component={ProductDetail}/>
+                    <Route path='/shoppingcart' exact component={ShoppingCart}/>
+                    <Route path='/shop/all' exact component={ShopAll}/>
+                    <Route path='/shop/men' exact component={ShopMen}/>
+                    <Route path='/shop/women' exact component={ShopWomen}/>
                 </BrowserRouter>
+                </div>
             )
         } else {
             return <div><h1 className="text-center">Loading</h1></div>
@@ -69,4 +58,5 @@ class App extends Component {
     }
 }
 
-export default connect(null,{keepLogin})(App)
+
+export default connect(null, {keepLogin})(App)

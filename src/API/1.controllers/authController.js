@@ -29,5 +29,41 @@ module.exports = {
                 })
             }
         })
-    }
+    },
+
+    login: (req, res) => {
+        let sql = `select * from users where email = '${req.query.email}'`
+        let sql2 = `select * from users where password = '${req.query.password}'`
+
+        db.query(sql, (err, result) => {
+            if(err) throw err
+
+            if(result.length === 0){
+                res.send({
+                    status : '401',
+                    error : 'Email is not registered. Please try again with a valid registered email address'
+                })
+            }
+            else {
+                db.query(sql2, (err2, result2) => {
+                    if(err2) throw err2
+
+                    if(result2.length === 0){
+                        res.send({
+                            status : '401',
+                            error : 'Your password does not match. Please try again'
+                        })
+                    }
+
+                    else {
+                        res.send({
+                            status : '200',
+                            success : 'You have logged in successfully.',
+                            user : result2
+                        })
+                    }
+                })
+            }
+        }) 
+    } 
 }

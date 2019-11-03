@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import {onRegister} from '../redux/actions/userActions'
 import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
+
+import {onRegister} from '../redux/actions/userActions'
 
 class Register extends Component {
 
@@ -13,6 +14,7 @@ class Register extends Component {
         // Ambil semua data dari text input
         let data_email = this.email.value
         let data_password = this.password.value
+
         // Name Split
         let data_fullName = this.fullName.value
         let name = data_fullName.split(' ')

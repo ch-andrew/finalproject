@@ -1,31 +1,72 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
-// import axios from 'axios'
 import {Redirect} from 'react-router-dom'
 import {Link} from 'react-router-dom'
 
-
-
-
+import {onLogin} from '../redux/actions/userActions'
 
 
 class Login extends Component {
 
     onLoginClick = () => {
         // Mengambil data dari textbox
-        let username = this.username.value 
-        let password = this.password.value
+        let data_email = this.email.value 
+        let data_password = this.password.value
 
-        // Memanggil Action Creator 'onLoginUser'
-        this.props.onLoginUser(username, password)
+        let loginData = {
+            email : data_email,
+            password : data_password
+        }
+        
+        this.props.onLogin(loginData)
 
     }
 
-    
+    loadingButton = () => {
+        if(this.props.isLoading){
+            return (
+                <div className="spinner-grow" role='status'>
+                    <span className="sr-only"></span>
+                </div>
+                
+            )
+        }
+
+        return (
+            <button 
+                    className="btn-block btn btn-success mb-2"
+                    onClick={this.onLoginClick}
+                >Login</button>
+        )
+    }
+
+    notification = () => {
+        // Error Notification
+        if(this.props.error !== ''){
+            return (
+                <div className="alert alert-danger mt-4">
+                    {this.props.error}
+                </div>
+            )
+        } 
+        
+        // Success Notification
+        else if(this.props.success){
+            return (
+                <div className="alert alert-success mt-4">
+                    {this.props.success}
+                </div>
+            )
+        } 
+        
+        else {
+            return null
+        }
+    }
 
     render() {
         // jika user belum login
-        if(!this.props.user_name){
+        if(!this.props.email){
             return (
                 <div>
                     <div className='col-sm-4 mx-auto card my-5'>
@@ -37,9 +78,9 @@ class Login extends Component {
                             
                             <form className='form-group'>
                                 <div className="my-2">
-                                    <h5 className="card-title "><b>Username</b></h5>
+                                    <h5 className="card-title "><b>Email</b></h5>
                                     <div>
-                                    <input ref={(input) => {this.username = input}} type='text' className='form-control'/>
+                                    <input ref={(input) => {this.email = input}} type='text' className='form-control'/>
                                     </div>
                                 </div>
                                 
@@ -51,10 +92,10 @@ class Login extends Component {
                                 </div>
 
                             </form>
-    
-                            <button className="btn-block btn btn-success mb-2" onClick={this.onLoginClick}>
-                                Login
-                            </button>
+
+                            {this.loadingButton()}
+
+                            {this.notification()}
                             <div>
                                 <div className="mt-2">Don't have an account? <Link to={`/register`}>Create one now!</Link></div>
                             </div>
@@ -72,13 +113,16 @@ class Login extends Component {
 // function yg akan mengambil data di redux state
 const mapStateToProps = (state) => {
     return {
-        isLoading : state.user.loading,
-        message : state.user.msg,
+        id : state.user.id,
         email : state.user.email,
-        id : state.user.id
+        firstName : state.user.firstName,
+        lastName : state.user.lastName,
+        isLoading : state.user.loading,
+        success : state.user.success,
+        error : state.user.error,
     }
 }
 
-export default connect(mapStateToProps)(Login)
+export default connect(mapStateToProps, {onLogin})(Login);
 
 // JSON.stringify akan mengubah bentuk object menjadi string

@@ -7,10 +7,11 @@ import {
     NavbarToggler,
     Nav,
     NavItem,
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem } from 'reactstrap';
+    // UncontrolledDropdown,
+    // DropdownToggle,
+    // DropdownMenu,
+    // DropdownItem 
+  } from 'reactstrap';
     
 
 import {connect} from 'react-redux'
@@ -37,7 +38,97 @@ class Header extends Component {
 
     render() {
       // jika belum ada yg login
-      if(!this.props.user_name){
+      if(!this.props.email){
+        return (
+          <div className="fixed-top border-bottom border-dark" style={{fontFamily:"Roboto"}}>
+  
+            <Navbar style={{backgroundColor:"black"}}>
+              <Nav className="mx-auto">
+                <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans"}}>Free Worldwide Shipping On Apparel Over $75.
+                <Link to="/" style={{color:"white", fontWeight:"bold"}}>Learn more.</Link>
+                </NavItem>
+              </Nav>
+            </Navbar>
+
+            <Navbar color="white" light expand="md">
+                <div style={{width:"50px"}}>
+                  <Link className="navbar-brand" to="/"><img src="image/omega_logo.png" alt="omega" style={{width:"50px"}}/></Link>
+                </div>
+
+                <NavbarToggler onClick={this.toggle} />
+                <Collapse isOpen={this.state.isOpen} navbar>
+                  <Nav className="mx-auto" navbar style={{fontSize:"1.2em", fontWeight:"bold"}}>
+                    <NavItem>
+                      <NavLink className="nav-link mr-4" style={{color: "black"}} to="/shop/all">All Products</NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className="nav-link mx-4" style={{color: "black"}} to="/shop/men">Men</NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className="nav-link mx-4" style={{color: "black"}} to="/shop/women">Women</NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className="nav-link ml-4" style={{color: "black"}} to="/">Outlet</NavLink>
+                    </NavItem>
+                  </Nav>
+                  
+
+                  <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
+                    <Link className="navbar-brand right" style={{color: "black"}} to='/login'><ShoppingCartIcon style={{fontSize: "36px"}}/></Link>
+                  </div>
+
+                  <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
+                    <Link className="navbar-brand right" style={{color: "black"}} to='/login'><AccountBoxIcon style={{fontSize: "36px"}}/></Link>
+                  </div>
+
+                </Collapse>
+            </Navbar>
+          </div>
+        );
+      } else if (this.props.account === 'admin'){
+        return (
+          <div className="fixed-top border-bottom border-dark" style={{fontFamily:"Roboto"}}>
+  
+            <Navbar style={{backgroundColor:"black"}}>
+              <Nav className="mx-auto">
+                <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans"}}>Free Worldwide Shipping On Apparel Over $75.
+                <Link to="/" style={{color:"white", fontWeight:"bold"}}>Learn more.</Link>
+                </NavItem>
+              </Nav>
+            </Navbar>
+
+            <Navbar color="white" light expand="md">
+                <div style={{width:"50px"}}>
+                  <Link className="navbar-brand" to="/"><img src="image/omega_logo.png" alt="omega" style={{width:"50px"}}/></Link>
+                </div>
+
+                <NavbarToggler onClick={this.toggle} />
+                <Collapse isOpen={this.state.isOpen} navbar>
+                  <Nav className="mx-auto" navbar style={{fontSize:"1.2em", fontWeight:"bold"}}>
+                    <NavItem>
+                      <NavLink className="nav-link mr-4" style={{color: "black"}} to="/shop/all">All Products</NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className="nav-link mx-4" style={{color: "black"}} to="/shop/men">Men</NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className="nav-link mx-4" style={{color: "black"}} to="/shop/women">Women</NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink className="nav-link ml-4" style={{color: "black"}} to="/">Outlet</NavLink>
+                    </NavItem>
+                  </Nav>
+                  
+                  <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
+                      <Link className="navbar-brand right" style={{color: "black"}} to='/admin'><AccountBoxIcon active style={{fontSize: "36px"}}/></Link>
+                  </div>
+
+                </Collapse>
+            </Navbar>
+          </div>
+        );
+      }
+      else{
         return (
           <div className="fixed-top" style={{fontFamily:"Roboto"}}>
   
@@ -72,64 +163,9 @@ class Header extends Component {
                   </Nav>
                   
                   <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
-                    <Link className="navbar-brand right" style={{color: "black"}} to='/login'><AccountBoxIcon style={{fontSize: "36px"}}/></Link>
+                      <Link className="navbar-brand right" style={{color: "black"}} to='/login'><AccountBoxIcon active style={{fontSize: "36px"}}/></Link>
                   </div>
-
                 </Collapse>
-            </Navbar>
-          </div>
-        );
-      } else {
-        return (
-          <div style={{fontFamily:"Roboto"}}>
-            {/* <Navbar style={{backgroundColor:"black"}}>
-              <Nav>
-                <NavItem>Free Shipping Worldwide</NavItem>
-              </Nav>
-            </Navbar> */}
-            <Navbar color="white" light expand="md">
-              <Link className="navbar-brand" to="/"><img src="image/omega_logo.png" alt="omega" style={{width:"50px"}}/></Link>
-              <NavbarToggler onClick={this.toggle} />
-              <Collapse isOpen={this.state.isOpen} navbar>
-                <Nav className="mx-auto" navbar style={{fontSize:"1.2em"}}>
-                  <NavItem>
-                    <NavLink className="nav-link mx-4" to="/shop/all">All Products</NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink className="nav-link mx-4" to="/shop/men">Men</NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink className="nav-link mx-4" to="/shop/women">Women</NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink className="nav-link mx-4" to="/">Sale</NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink className="nav-link mx-4" to="/">Outlet</NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink className="nav-link mx-4" to="/">Contact</NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink className="nav-link mx-4" to="/cart"><ShoppingCartIcon/>Cart</NavLink>
-                  </NavItem>
-                  <UncontrolledDropdown nav inNavbar className="text-center">
-                  <DropdownToggle nav caret>
-                    <AccountBoxIcon/>
-                    <b>Hello {this.props.user_name}</b>
-                  </DropdownToggle>
-                  <DropdownMenu right>
-                    <DropdownItem>
-                      <NavLink className="nav-link" to="/manageproducts">Dashboard</NavLink>
-                    </DropdownItem>
-                    <DropdownItem divider />
-                    <DropdownItem>
-                    <NavLink className="nav-link" onClick={this.props.onLogoutUser}>Log Out</NavLink>
-                    </DropdownItem>
-                  </DropdownMenu>
-                </UncontrolledDropdown>
-                </Nav>
-              </Collapse>
             </Navbar>
           </div>
         );
@@ -148,6 +184,8 @@ const mapStateToProps = (state) => {
       isLoading : state.user.loading,
       success : state.user.success,
       error : state.user.error,
+      account : state.user.account
   }
 }
+
 export default connect(mapStateToProps)(Header)

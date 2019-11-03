@@ -7,7 +7,7 @@ var bodyParser = require('body-parser')
 const port = 2077
 
 const {
-    authRouter
+    authRouter, productRouter
 } = require('./2.routers')
 
 app.use(bodyParser.json())
@@ -20,5 +20,7 @@ app.get('/', (req,res) => {
 app.use(express.static('./public'))
 
 app.use('/auth', authRouter)
+
+app.use('/products' , productRouter)
 
 app.listen(port, console.log('Server yeyeyeeee'))

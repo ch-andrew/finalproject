@@ -3,50 +3,54 @@ import {urlApi} from '../../API/3.helpers/database'
 import Swal from 'sweetalert2'
 
 export const onLogin = (userObject) => {
-    /**
-     * sama sepeerti loginObj
-     * userObject = { 
-     *      username : state/inputan,
-     *      password : state/inputan
-     * }
-     * 
-     * userObject = {asalNama : this.state.loginUsername, asalKunci : this.state.loginPassword}
-     */
 
     return (dispatch) => {
         dispatch({
             type : 'IS_LOADING'
         })
 
-        Axios.get(urlApi + 'users', {
-            params : {
-                // properti di kiri adalah column dari Database
-                username : userObject.asalNama,
-                password : userObject.asalKunci
+        Axios.get(urlApi + '/auth/login',{ 
+            params:{
+            email : userObject.email,
+            password : userObject.password
             }
         })
         .then((res) => {
+            
             console.log(res)
-            if(res.data.length > 0){
+            if(res.data.status === '401'){
+                dispatch({
+                    type : 'WRONG_CREDENTIALS',
+                    error : res.data.error
+                })
+            }
+            else {
+
+                let { id , email, firstName, lastName, accountType} = res.data.user[0]
+
+                localStorage.setItem(
+                    'userData',
+                    JSON.stringify({id, email, firstName, lastName, accountType})
+                )
+                
                 dispatch({
                     type : 'LOGIN_SUCCESS',
-                    payload : {
-                        a : res.data[0].username,
-                        b : res.data[0].role,
-                        c : res.data[0].id
-                    }
+                    email : res.data.user[0].email,
+                    firstName : res.data.user[0].firstName,
+                    lastName : res.data.user[0].lastName,
+                    id : res.data.user[0].id,
+                    success : res.data.user[0].success,
+                    accountType : res.data.user[0].accountType,
                 })
+                Swal.fire(
+                    'Success!',
+                    res.data.success,
+                    'success'
+                )
             }
         })
         .catch((err) => {
             console.log(err)
-            // swal('System Error', 'A problem has occured, please contact an administrator', 'error')
-            Swal.fire({
-                type: 'error',
-                title: 'Oops...',
-                text: 'Something went wrong!',
-                footer: '<a href>Why do I have this issue?</a>'
-              })
         })
     }
 }
@@ -79,10 +83,10 @@ export const onRegister = (userObject) => {
             else{
                 dispatch({
                     type : 'REGISTRATION_SUCCESS',
+                    id : userObject.id,
                     email : userObject.email,
                     firstName : userObject.firstName,
                     lastName : userObject.lastName,
-                    id : userObject.id,
                     success : res.data.success
                 })
                 Swal.fire(
@@ -98,25 +102,15 @@ export const onRegister = (userObject) => {
     }
 }
 
-export const keepLogin = (cookieData) => {
+export const keepLogin = (userObject) => {
     return (dispatch) => {
-        Axios.get(urlApi + 'users', {
-            params : {
-                username : cookieData
-            }
-        })
-        .then((res) => {
-            dispatch({
-                type : 'KEEP_LOGIN',
-                payload : {
-                    username : res.data[0].username,
-                    role : res.data[0].role,
-                    id : res.data[0].id
-                }
-            })
-        })
-        .catch((err) => {
-            console.log(err)
+        dispatch({
+            type : 'KEEP_LOGIN',
+            id : userObject.id,
+            email : userObject.email,
+            firstName : userObject.firstName,
+            lastName : userObject.lastName,
+            accountType : userObject.accountType,
         })
     }
 }

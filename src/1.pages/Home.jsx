@@ -3,7 +3,7 @@ import axios from 'axios'
 import ProductItem from './ProductItem'
 
 import Footer from './Footer'
-import Carousel from '../2.components/Carousel'
+import CarouselHome from '../2.components/Carousel'
 
   
 
@@ -93,7 +93,7 @@ class Home extends Component {
             <div className="">
                 <div className="">
                     {/* <img src="image/tagline_header.png" class="img-fluid" alt="tagline_header"/> */}
-                    <Carousel/>
+                    <CarouselHome/>
                 </div>
                 <div className="row">
                     <div className="col mx-0">

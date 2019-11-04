@@ -25,7 +25,7 @@ class Dashboard extends Component {
         
         if(this.props.account === 'admin'){
             return (
-                <div className="container my-5 border border-dark">
+                <div className="mx-5 my-5 border border-dark" style={{paddingLeft: '15px', paddingRight: '15px'}}>
                     <h4 className='font-weight-bold pt-2'>Dashboard</h4>
                     <Nav tabs>
                         {/* Manage Products */}

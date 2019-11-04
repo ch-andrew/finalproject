@@ -19,7 +19,7 @@ class ShopAll extends Component {
 
     getData = () => {
         Axios.get(
-            'http://localhost:2077/products/list'
+            'http://localhost:2077/products/all'
 
         ).then(res => {
             this.setState(

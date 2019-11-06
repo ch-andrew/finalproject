@@ -50,8 +50,7 @@ class ProductItem extends Component {
         }
         )
         
-    }
-        
+    }   
 
     notification = () => {
         if(this.state.error){
@@ -67,15 +66,36 @@ class ProductItem extends Component {
     }
 
     render() {
-        let {id, name, defaultImage} = this.props.product
+        let {id, name, defaultImage, IDR, MYR , SGD, gender, category} = this.props.product
+
+        let renderPrice = () => {
+            if(this.props.region === 'Indonesia'){
+                return(
+                    <p className='card-title text-center' style={{fontSize: '1rem'}}>Rp.{IDR}</p>
+                )
+            }
+
+            else if (this.props.region === 'Malaysia'){
+                return(
+                    <p className='card-title text-center' style={{fontSize: '1rem'}}>RM{MYR}</p>
+                )
+            }
+
+            else {
+                return(
+                    <p className='card-title text-center' style={{fontSize: '1rem'}}>S${SGD}</p>
+                )
+            }
+        }
 
         return (
             <div className='card col-sm-3 my-4' style={{border: 'none'}}>
-                <Link to={`/productdetail/${id}`}>
+                <Link to={`/shop/product/${category.toLowerCase()}/${gender.toLowerCase()}/${id}`}>
                 <div className='product-card'>
                     <img src={defaultImage} className='card-img-top' alt=""/>
                     <div className='card-body'>
                     <p className='card-title text-center' style={{fontSize: '1rem'}}>{name}</p>
+                    {renderPrice()}
                 </div>
 
                 </div>
@@ -94,7 +114,8 @@ const mapStateToProps = (state) => {
         isLoading : state.user.loading,
         success : state.user.success,
         error : state.user.error,
-        account : state.user.account
+        account : state.user.account,
+        region : state.locale.region,
     }
 }
 

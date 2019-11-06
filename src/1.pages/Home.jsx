@@ -4,6 +4,7 @@ import ProductItem from './ProductItem'
 
 import Footer from './Footer'
 import CarouselHome from '../2.components/Carousel'
+import './Home.css'
 
   
 
@@ -91,27 +92,49 @@ class Home extends Component {
     render() {
         return (
             <div className="">
-                <div className="">
-                    {/* <img src="image/tagline_header.png" class="img-fluid" alt="tagline_header"/> */}
+                <div className="" style={{marginBottom: '30px'}}>
                     <CarouselHome/>
                 </div>
-                <div className="row">
-                    <div className="col mx-0">
-                        <a href="/" class="">
-                            <img src="image/header1.jpg" class="img-fluid" alt="First"/>
+
+                    <div class="row">
+                        <div class="col-4 p-0 css-container">
+                            <div className='text-center'>
+                                <a href="/shop/men">
+                                    <img src="image/header1.jpg" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-4 p-0 css-container">
+                            <div className='text-center'>
+                                <a href="/shop/men">
+                                    <img src="image/header2.jpg" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-4 p-0 css-container">
+                            <div className='text-center'>
+                                <a href="/shop/men">
+                                <   img src="image/header3.jpg" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                
+                    {/* <div className="col mx-0 p-0">
+                        <a href="/" className="">
+                            <img src="image/header1.jpg" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
                         </a>
                     </div>
-                    <div className="col mx-0">
-                        <a href="/" class="">
-                            <img src="image/header2.jpg" class="img-fluid" alt="Second"/>
+                    <div className="col mx-0 p-0">
+                        <a href="/" className="">
+                            <img src="image/header2.jpg" className="img-fluid" alt="Second" style={{maxHeight: '650px'}}/>
                         </a>
                     </div>
-                    <div className="col mx-0">
-                        <a href="/" class="">
-                            <img src="image/header3.jpg" class="img-fluid" alt="Third"/>
+                    <div className="col mx-0 p-0">
+                        <a href="/" className="">
+                            <img src="image/header3.jpg" className="img-fluid" alt="Third" style={{height: '650px'}}/>
                         </a>
-                    </div>
-                </div>
+                    </div> */}
 
                 <div className="text-center mx-auto my-4">
                     <h1 style={{textDecoration:"underline", fontFamily:"Playfair Display, serif", fontSize:"4em"}}>New Arrivals</h1>

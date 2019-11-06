@@ -71,7 +71,7 @@ class CarouselHome extends Component {
           onExited={this.onExited}
           key={item.src}
         >
-          <img src={item.src} alt={item.altText} className="img-fluid"/>
+          <img src={item.src} alt={item.altText} className="img-fluid" style={{maxWidth: '100%', maxHeight:'650px'}}/>
           {/* <CarouselCaption captionText={item.caption} captionHeader={item.caption}/> */}
         </CarouselItem>
       );

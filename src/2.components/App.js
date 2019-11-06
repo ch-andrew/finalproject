@@ -26,6 +26,7 @@ class App extends Component {
         // check local storage
         let userStorage = JSON.parse(localStorage.getItem('userData'))
         
+        
         if(userStorage){
             // kirim ke redux
             this.props.keepLogin(userStorage)
@@ -44,7 +45,7 @@ class App extends Component {
                     <Route path='/register' exact component={Register}/>
                     <Route path='/login'exact component={Login}/>
                     <Route path='/admin' exact component={AdminPage}/>
-                    <Route path='/productdetail/:id' exact component={ProductDetail}/>
+                    <Route path='/shop/product/:category/:gender/:id' exact component={ProductDetail}/>
                     <Route path='/shoppingcart' exact component={ShoppingCart}/>
                     <Route path='/shop/all' exact component={ShopAll}/>
                     <Route path='/shop/men' exact component={ShopMen}/>
@@ -53,8 +54,8 @@ class App extends Component {
                 </div>
             )
         } else {
-            return  <div class="spinner-border text-primary" role="status">
-                        <span class="sr-only">Loading...</span>
+            return  <div className="spinner-border text-primary" role="status">
+                        <span className="sr-only">Loading...</span>
                     </div>
         }
     }

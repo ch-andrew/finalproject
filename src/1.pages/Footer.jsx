@@ -53,11 +53,11 @@ class Footer extends Component {
                                 <p>
                                     By entering your email address below, you consent to receiving our newsletter with access to our latest collections, events and initiatives.
                                 </p>
-                                <form class="input-group">
-                                    <input type="text" class="form-control form-control-sm" placeholder="Your email"
+                                <form className="input-group">
+                                    <input type="text" className="form-control form-control-sm" placeholder="Your email"
                                         aria-label="Your email" aria-describedby="basic-addon2"/>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-sm btn-primary my-0" type="button">Sign up</button>
+                                    <div className="input-group-append">
+                                        <button className="btn btn-sm btn-primary my-0" type="button">Sign up</button>
                                     </div>
 
                                 </form>

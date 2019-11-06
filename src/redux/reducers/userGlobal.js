@@ -7,8 +7,10 @@ const INITIAL_STATE = {
     loading : false, 
     error: '',
     success: '',
-    account: ''
+    account: '',
 }
+
+
 
 
 export default (state = INITIAL_STATE, action) => {

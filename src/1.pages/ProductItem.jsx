@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {Link} from 'react-router-dom'
-import axios from 'axios';
+// import axios from 'axios';
 // import Swal from 'sweetalert2'
 import {connect} from 'react-redux'
 import './sub.css'
@@ -17,40 +17,6 @@ class ProductItem extends Component {
         selectedPict: '',
 
     }
-
-    AddtoCart = (id, name, price, picture, description, qty) => {
-        let addedItems = [{id, name, price, picture, description, qty}]
-
-        console.log(addedItems);
-
-        axios.get(
-            'http://localhost:2019/users',
-        ).then((res) => {
-
-            let user = JSON.parse(localStorage.getItem('userData'))
-
-                axios.post(
-                    `http://localhost:2019/users/${user.id}/`,{
-                        cart: addedItems
-                    }
-                ).then((res) => {
-                    console.log(res);
-                    
-                })
-
-                // let indexofID = id - 1
-
-                // console.log(res.data[indexofID].id);
-                
-    
-                // if(qty === 0){
-    
-                //     this.setState({loading: false, error: `Please input the amount of quantity`})
-                // } 
-        }
-        )
-        
-    }   
 
     notification = () => {
         if(this.state.error){

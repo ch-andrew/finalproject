@@ -12,6 +12,8 @@ import ShopAll from '../1.pages/ShopAll'
 import ShopMen from '../1.pages/Shop Men/ShopMen'
 import ShopWomen from '../1.pages/Shop Women/ShopWomen'
 import AdminPage from '../1.pages/AdminPage'
+import TransactionPage from '../1.pages/TransactionPage'
+import MyAccount from '../1.pages/MyAccount'
 
 import { connect } from 'react-redux';
 import {keepLogin} from '../redux/actions'
@@ -32,6 +34,8 @@ class App extends Component {
             this.props.keepLogin(userStorage)
         }
 
+        
+
         this.setState({check: true})
     }
 
@@ -45,18 +49,22 @@ class App extends Component {
                     <Route path='/register' exact component={Register}/>
                     <Route path='/login'exact component={Login}/>
                     <Route path='/admin' exact component={AdminPage}/>
+                    <Route path='/my-account' exact component={MyAccount}/>
                     <Route path='/shop/product/:category/:gender/:id' exact component={ProductDetail}/>
                     <Route path='/shoppingcart' exact component={ShoppingCart}/>
                     <Route path='/shop/all' exact component={ShopAll}/>
                     <Route path='/shop/men' exact component={ShopMen}/>
                     <Route path='/shop/women' exact component={ShopWomen}/>
+                    <Route path='/transaction' exact component={TransactionPage}/>
                 </BrowserRouter>
                 </div>
             )
         } else {
-            return  <div className="spinner-border text-primary" role="status">
-                        <span className="sr-only">Loading...</span>
-                    </div>
+            return (
+            <div className="spinner-border text-primary" role="status">
+                <span className="sr-only">Loading...</span>
+            </div>
+            )
         }
     }
 }

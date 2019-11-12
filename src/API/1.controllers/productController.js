@@ -32,15 +32,45 @@ module.exports = {
         })
     },
 
+    getMenProducts: (req, res) => {
+        let sql = `select id, products.name, description, c.name as category, gender, IDR, SGD, MYR, defaultImage from products 
+                    join prices p on p.productId = products.id
+                    join categories c on c.catId = products.categoryId
+                    where categoryId in (select catId from categories where gender = 'Men')`
+        
+        db.query(sql, (err,result) => {
+            if(err) throw err
+            res.send({
+                status : '200',
+                products : result
+            })
+        })
+    },
+
+    getWomenProducts: (req, res) => {
+        let sql = `select id, products.name, description, c.name as category, gender, IDR, SGD, MYR, defaultImage from products 
+                    join prices p on p.productId = products.id
+                    join categories c on c.catId = products.categoryId
+                    where categoryId in (select catId from categories where gender = 'Women')`
+        
+        db.query(sql, (err,result) => {
+            if(err) throw err
+            res.send({
+                status : '200',
+                products : result
+            })
+        })
+    },
+
     getProduct: (req, res) => {
         let sql = `select name, description, categoryId, IDR, MYR, SGD from products
                     join prices p on p.productId = products.id
-                    where products.id = 1`
+                    where products.id = ${req.params.id}`
 
         let sql2 = `select v.productId, color, colorCodes, image, variantId from products
                     join prices p on p.productId = products.id
                     join variants v on v.productId = products.id
-                    where products.id = 1`
+                    where products.id = ${req.params.id}`
         
 
         db.query(sql, (err, result) => {
@@ -52,6 +82,17 @@ module.exports = {
                     product: result,
                     variants : result2
                 })
+            })
+        })
+    },
+
+    getVariant: (req, res) => {
+        let sql = `select * from variants where color = ${req.body.color}`
+
+        db.query(sql, (err,result) => {
+            if(err) throw err
+            res.send({
+                variant : result
             })
         })
     },
@@ -83,14 +124,15 @@ module.exports = {
         })
     },
 
-    getPriceList : (req,res) => {
-        let sql = `select name, productId, IDR, MYR, SGD from prices
-                    join products p on p.id = prices.productId;`
+    getPrice : (req,res) => {
+        let sql = `select * from prices
+                    join products p on p.id = prices.productId
+                    where p.id = ${req.params.id}`
 
         db.query(sql, (err,result) => {
             if(err) throw err
             res.send({
-                pricelist : result
+                price : result
             })
         })
     },
@@ -179,4 +221,5 @@ module.exports = {
             )
         })
     },
+
 }

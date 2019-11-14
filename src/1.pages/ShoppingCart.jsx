@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
-import axios from 'axios'
 import {connect} from 'react-redux'
 import {Link} from 'react-router-dom'
 import Swal from 'sweetalert2'
-import {Redirect} from 'react-router-dom'
+// import {Redirect} from 'react-router-dom'
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
+import { getCartLength } from '../redux/actions'
 import Axios from 'axios'
+import Footer from './Footer'
 
 class ShoppingCart extends Component {
 
@@ -20,7 +21,7 @@ class ShoppingCart extends Component {
         selectedPict: '',
         remove: '',
         subtotal: {},
-        check: false
+        check: false,
     }
 
     componentDidMount() {
@@ -46,7 +47,7 @@ class ShoppingCart extends Component {
     }
 
     getData = () => {
-        axios.get(
+        Axios.get(
             'http://localhost:2077/cart/data', {
                 params: {
                     userId: this.props.id
@@ -63,7 +64,7 @@ class ShoppingCart extends Component {
                 check:true
             })
 
-            console.log(this.state)
+            console.log(this.state.products)
 
 
         }).catch((err)=>{
@@ -75,6 +76,8 @@ class ShoppingCart extends Component {
     plusHandler = (id) => {
         
         let result = this.state.products.find(product => product.cartId === id)
+
+        this.renderPricing()
         
         if(result.quantity < 12){
             let add = result.quantity += 1
@@ -109,6 +112,32 @@ class ShoppingCart extends Component {
             this.getData()
         }).catch(err => {
             console.log(err)
+        })
+    }
+
+    onSave = (id , qty) => {
+        Axios.put(`http://localhost:2077/cart/changequantity` , {
+            cartId : id,
+            quantity: qty
+        }).then(res => {
+            this.getPricing()
+            Axios.get(`http://localhost:2077/cart/data`,
+            {
+              params: {
+                userId: this.props.id
+            }
+            }).then((res) => {
+                let arrCart = res.data.cart.map((item) => {return item.quantity} )
+                let totalQuantity = arrCart.reduce((a,b) => a + b, 0)
+      
+                console.log(totalQuantity);
+                this.props.getCartLength(totalQuantity)
+                
+                
+            }).catch((err) => {
+                console.log(err);
+                
+            })
         })
     }
 
@@ -222,7 +251,7 @@ class ShoppingCart extends Component {
 
             if(this.props.region === 'Indonesia'){
                 Swal.fire({
-                    title: 'Do you wish to proceed with payment?',
+                    title: 'Do you wish to proceed with checkout?',
                     html: `<div>Number of items : ${this.props.cartLength} <br/>Total payment for this order : Rp.${totalIDR.toLocaleString('en')}</div>`,
                     icon: 'warning',
                     width: 600,
@@ -232,12 +261,24 @@ class ShoppingCart extends Component {
                     confirmButtonText: 'Proceed'
                   }).then((result) => {
                     if (result.value) {
+                        let currency
+                        if(this.props.region === 'Indonesia'){
+                            currency = 'IDR'
+                        }
+                        else if(this.props.region === 'Malaysia'){
+                            currency = 'MYR'
+                        }
+                        else{
+                            currency = 'SGD'
+                        }
+
                         Axios.post(`http://localhost:2077/transaction/checkout`, {
                             userId : this.props.id,
                             quantity: this.props.cartLength,
+                            currency: currency,
                             total: totalIDR
                         }).then(res => {
-                            window.location.href = "/transaction";
+                            window.location.href = `/transaction/${this.props.id}`;
                         }).catch(err => {
                             console.log(err);
                         })
@@ -291,7 +332,7 @@ class ShoppingCart extends Component {
 
 
         return (
-            <div className='col-4 mt-3 py-2 p-0 row' style={{border: '2px solid #1a1a1a'}}>
+            <div className='mt-3 py-2 p-0 row' style={{border: '2px solid #1a1a1a', height: '250px'}}>
                 <div className='col-12 my-3' style={{borderBottom: '2px solid #1a1a1a'}}>
                     {renderSubTotal()}
                     {renderShipping()}
@@ -315,7 +356,7 @@ class ShoppingCart extends Component {
             let notification = () => {
                 if(product.quantity === 12){
                     return(
-                        <div class="alert alert-warning mb-0" role="alert">
+                        <div class="m-0" style={{backgroundColor: '#FFF3CD', color: '#85644D'}} role="alert">
                             Maximum purchase quantity for this product has been reached. (Max : 12)
                         </div>
                     )
@@ -323,7 +364,7 @@ class ShoppingCart extends Component {
 
                 else if (product.quantity === 0){
                     return (
-                        <div class="alert alert-warning mb-0" role="alert">
+                        <div class="m-0" style={{backgroundColor: '#FFF3CD', color: '#85644D'}} role="alert">
                             Quantity for this product is empty.
                             <br/>Do you wish to
                             <span className='link-remove text-right' onClick={() => this.removeItem(product.cartId)} style={{cursor:'pointer'}}> remove this product</span> from your cart?
@@ -334,17 +375,14 @@ class ShoppingCart extends Component {
 
                 else {
                     return (
-                        <div class="alert mb-0" role="alert">
-                            Quantity for this product is empty.
-                            <br/>Do you wish to
-                            <span className='link-remove text-right' onClick={() => console.log(product.quantity)} style={{cursor:'pointer'}}> remove this product</span> from your cart?
+                        <div class="m-0">
                         </div>
                     )
                 }
             }
-
+         
             return(
-                <div className='col-8 mt-3 m-0 p-0 row' style={{border: '2px solid #1a1a1a', backgroundColor: '#EEEEEE'}}>
+                <div className='mt-3 m-0 p-0 row' style={{border: '2px solid #1a1a1a', backgroundColor: '#EEEEEE', height: '250px'}}>
                     <div className='col-4 p-0 m-auto text-center'>
                         <img src={product.image} alt={product.variantId} style={{width: '200px'}}/>
                     </div>
@@ -361,6 +399,9 @@ class ShoppingCart extends Component {
                             <AddIcon className="ml-3" style={{backgroundColor: '#1a1a1a', color: 'white', cursor: 'pointer'}}
                             onClick={() => this.plusHandler(product.cartId)}/>
                             </h5>
+                            <button className="btn btn-primary mr-3" onClick={() => this.onSave(product.cartId , product.quantity)}>
+                                Save
+                            </button>
                             {notification()}
                     </div>
                 </div>
@@ -371,27 +412,50 @@ class ShoppingCart extends Component {
     render() {
         // Jika sudah login
         if(this.state.check){
-            if(this.props.email && this.state.subtotal){
+            if(this.props.email && this.state.subtotal && this.state.products.length > 0){
                 return (
+                    <div>
                     <div className='container' style={{fontFamily : 'Roboto'}}>
                     {/* RENDERING LIST DATA */}
                         <div className="row">
                             <h1 className='col-12 text-center'>{this.props.cartLength > 1 ? `You have ${this.props.cartLength} items in your cart:` : `You have ${this.props.cartLength} item in your cart:`}</h1>
+                            <div className='col-8'>
+
                             {this.renderList()}
+                            </div>
+                            <div className='col-4'>
+
                             {this.renderPricing()}
+                            </div>
                         </div>
-                        <div>
+                    </div>
+                        <Footer/>
+                    </div>
+                )
+            }
+
+            else {
+                return(
+                    <div className='container' style={{fontFamily : 'Roboto'}}>
+                        <div className="row">
+                            <div className="col text-center">
+                                <h1>
+                                    You have no items in your cart.
+                                </h1>
+                                <button className='btn btn-primary' onClick={() => window.location.href="/shop/all"}>
+                                    Start Shopping Now
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )
             }
-        
-            return <Redirect to="/"/>
+
             
         }
 
         
-        return <p>Loding</p>
+        return <p>Loading</p>
     
     }
 }
@@ -413,4 +477,4 @@ const mapStateToProps = (state) => {
     }
   }
   
-export default connect(mapStateToProps)(ShoppingCart)
+export default connect(mapStateToProps, {getCartLength})(ShoppingCart)

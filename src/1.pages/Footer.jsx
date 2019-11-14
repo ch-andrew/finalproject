@@ -5,7 +5,7 @@ class Footer extends Component {
     render() {
         return (
             <div>
-                <footer className="page-footer font-small pt-4" style={{backgroundColor: "black", color: "white", fontFamily: "Roboto"}}>
+                <footer className="page-footer font-small mt-5 pt-4" style={{backgroundColor: "black", color: "white", fontFamily: "Roboto"}}>
 
                     <div className="container-fluid text-center text-md-left">
 
@@ -15,16 +15,16 @@ class Footer extends Component {
                                 <h5 className="text-uppercase">Explore</h5>
                                 <ul className="list-unstyled">
                                     <li>
-                                        <a href="#!">Link</a>
+                                        <a href="#!">New Arrivals</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link</a>
+                                        <a href="#!">Shop Men's</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link</a>
+                                        <a href="#!">Shop Women's</a>
                                     </li>
                                     <li>
-                                        <a href="#!">Link</a>
+                                        <a href="#!">Outlet</a>
                                     </li>
                                 </ul>
                             </div>

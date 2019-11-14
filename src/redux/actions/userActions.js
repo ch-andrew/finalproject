@@ -3,6 +3,7 @@ import {urlApi} from '../../API/3.helpers/database'
 import Swal from 'sweetalert2'
 
 export const onLogin = (userObject) => {
+console.log(userObject);
 
     return (dispatch) => {
         dispatch({
@@ -27,6 +28,9 @@ export const onLogin = (userObject) => {
             else {
 
                 let { id , email, firstName, lastName, accountType} = res.data.user[0]
+                
+                console.log(res.data);
+                
 
                 localStorage.setItem(
                     'userData',
@@ -52,6 +56,14 @@ export const onLogin = (userObject) => {
         .catch((err) => {
             console.log(err)
         })
+    }
+}
+
+export const onLogOut = () => {
+    localStorage.clear()
+
+    return {
+        type : 'LOGOUT_SUCCESS'
     }
 }
 

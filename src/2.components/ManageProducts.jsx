@@ -429,7 +429,7 @@ class ManageProducts extends Component {
             // DISPLAY CONTENT
             if(idx !== this.state.selectedId){
                 return (
-                    <tr key={idx} style={{height: '150px'}}>
+                    <tbody key={idx} style={{height: '150px', msOverflowY: 'scroll' }}>
                         <td style={{width: '50px'}}>{idx}</td>
                         <td style={{width: '150px'}}>{product.name}</td>
                         <td style={{width: '300px'}}>{product.description}</td>
@@ -447,7 +447,7 @@ class ManageProducts extends Component {
                                     >EDIT
                             </button>
                         </td>
-                    </tr>
+                    </tbody>
                 )
             }
             // TEXTBOX FOR EDITING CONTENT

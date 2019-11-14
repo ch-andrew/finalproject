@@ -1,7 +1,7 @@
 Project Overview
 
-Website for Omega :
-Omega is a fake clothing brand with medium-sized office based in Indonesia. The company could ship their products to Singapore and Malaysia. 
+Website for Cimo :
+Cimo is a fake clothing brand with medium-sized office based in Indonesia. The company could ship their products to Singapore and Malaysia. 
 
 Objective :
 Creating a website for such company that is also a platform or tools for the employees to create/manage content within the website.

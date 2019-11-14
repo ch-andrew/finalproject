@@ -4,6 +4,8 @@ const { authController } = require('../1.controllers')
 
 router.post('/register', authController.register)
 
+router.get('/verify', authController.verify)
+
 router.get('/login', authController.login)
 
 router.get('/info', authController.getInformation)

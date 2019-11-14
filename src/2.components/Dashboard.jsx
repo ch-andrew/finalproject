@@ -6,6 +6,7 @@ import {connect} from 'react-redux'
 import { TabContent, TabPane, Nav, NavItem, NavLink}from 'reactstrap';
 import classnames from 'classnames';
 import ManageProducts from './ManageProducts'
+import Transactions from './Transactions'
 
 class Dashboard extends Component {
 
@@ -225,6 +226,10 @@ class Dashboard extends Component {
                 )
             }
 
+            else if (this.state.activeTab === '4'){
+                
+            }
+
             else {
                 return (
                     <div className="col-9 px-5 pb-5">
@@ -343,7 +348,7 @@ class Dashboard extends Component {
                         <TabPane tabId="2">
                         </TabPane>
                         <TabPane tabId="3">
-                            ORDER
+                            <Transactions/>
                         </TabPane>
                     </TabContent>
                 </div>

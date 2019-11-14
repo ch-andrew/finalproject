@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import {connect} from 'react-redux'
 import Axios from 'axios'
+import './sub.css'
+import moment from 'moment'
+import Swal from 'sweetalert2'
 
 class Checkout extends Component {
 
@@ -11,13 +14,25 @@ class Checkout extends Component {
         details: {},
         activeTab: '1',
         shipping: false,
-        payment: false
+        payment: false,
+        filename: '',
+        selectedFile: '',
+        deadline: '',
+        status: '',
+        inputBank: 'Bank BCA'
     }
 
     componentDidMount() {
         this.getData()
         this.getCart()
         this.getDetails()
+        if(this.props.payment){
+            this.setState({shipping: true, activeTab: '2'})
+        }
+
+        if(this.props.complete){
+            this.setState({activeTab: '3'})  
+        }
     }
 
     getDetails = () => {
@@ -39,18 +54,20 @@ class Checkout extends Component {
         Axios.get(
             'http://localhost:2077/cart/data', {
                 params: {
-                    userId: this.props.id
+                    input: 'checkout cart',
+                    userId: this.props.id,
           
                   }
           
             }
 
         ).then((res) => {
-            
-            this.setState({
-                cart : res.data.cart,
-            })
-            console.log(res.data.cart);
+            if(res){
+                this.setState({
+                    cart : res.data.cart,
+                })
+                console.log(this.state.cart);
+            }
 
         }).catch((err)=>{
             console.log(err)
@@ -66,6 +83,7 @@ class Checkout extends Component {
             }
         }).then(res => {
             this.setState({address: res.data.info[0], user: res.data.user[0]})
+            console.log(this.state.address)
             
         }).catch(err => {
             console.log(err);
@@ -74,32 +92,158 @@ class Checkout extends Component {
 
     Proceed = () => {
 
-        var inputCountry = document.getElementById('inputCountry').value
-
         if(this.state.activeTab === '1'){
-            Axios.post(`http://localhost:2077/auth/change-information` , {
-                userId : this.props.id,
-                type: 'changeInfo',
-                firstName : this.firstName.value,
-                lastName : this.lastName.value,
-                shippingAddress : this.shipping.value,
-                city : this.city.value,
-                province : this.province.value,
-                zipCode : this.zipCode.value,
-                country : inputCountry,
-                phoneNumber: this.phoneNumber.value
-            })
+            var inputCountry = document.getElementById('inputCountry').value
+            Swal.fire({
+                title: 'Do you wish to proceed with payment?',
+                text: 'All items in your cart will be removed.',
+                icon: 'warning',
+                width: 600,
+                showCancelButton: true,
+                confirmButtonColor: '#007BFF',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Proceed'
+              }).then((result) => {
+                    if (result.value) {
+                        Axios.post(`http://localhost:2077/auth/change-information` , {
+                            userId : this.props.id,
+                            type: 'changeInfo',
+                            firstName : this.firstName.value,
+                            lastName : this.lastName.value,
+                            shippingAddress : this.shipping.value,
+                            city : this.city.value,
+                            province : this.province.value,
+                            zipCode : this.zipCode.value,
+                            country : inputCountry,
+                            phoneNumber: this.phoneNumber.value
+                        }).then(res => {
+                            console.log(res);
+                            this.setState({activeTab: '2' , shipping: true})
+                            Axios.post(`http://localhost:2077/transaction/pay-time` , {
+                                userId : this.props.id,
+                            }).then(res => {
+                                console.log(res.data.result[0]);
+                                this.setState({deadline: res.data.result[0].paymentDeadline, status: res.data.result[0].status, transactionId: res.data.result[0].transactionId})
+                                console.log(this.state.deadline)
+                                if(this.state.deadline !== 'N'){
+                                    let check = moment().format('YYYY-M-D HH:mm')
+                                    if(this.state.deadline <= check){
+                                        Axios.post(`http://localhost:2077/transaction/pay-time` , {
+                                            input: 'deadline expired',
+                                            userId : this.props.id
+                                        }).then(res => {
+                                            console.log(res);
+                                            Axios.post(`http://localhost:2077/transaction/checkout`, {
+                                                userId : this.props.id,
+                                                quantity: this.props.cartLength,
+                                                total: this.state.details.totalPayment,
+                
+                                            }).then(res => {
+                                                console.log(res);
+                                            }).catch(err => {
+                                                console.log(err);
+                                            })
+                                            
+                                        }).catch(err => {
+                                            console.log(err);
+                                        })
+                                    }
 
-            this.setState({activeTab: '2' , shipping: true})
-            console.log(this.state.shipping);
-            
+                                    else {
+
+                                    }
+                                }
+                
+                                else {
+                                    Axios.post(`http://localhost:2077/transaction/pay-time` , {
+                                        input: 'set time',
+                                        userId : this.props.id,
+                                        paymentIssued: moment().format('YYYY-M-D HH:mm'),
+                                        paymentDeadline: moment().add(1 , 'h').format('YYYY-M-D HH:mm')
+                                    }).then(res => {
+                                        console.log(res);
+                                        
+                                                Axios.post(`http://localhost:2077/transaction/pay-time` , {
+                                                    userId : this.props.id,
+                                                }).then(res => {
+                                                    this.setState({deadline: res.data.result[0].paymentDeadline, status: res.data.result[0].status})
+                                                    console.log(this.state.deadline)
+                                                    return (dispatch) => {
+                                                        dispatch({
+                                                            type : 'PAYMENT'
+                                                        })
+                                                    }
+                                                }).catch(err => {
+                                                    console.log(err);
+                                                })
+                                        
+                                    }).catch(err => {
+                                        console.log(err);
+                                    })
+                                }
+                            })
+                            
+                        }).catch(err => {
+                            console.log(err);
+                            
+                        })
+                        
+                                }
+                        })
+                    }
+
+        else if(this.state.activeTab === '2'){
+            var fd = new FormData()
+            let data = {
+                name : this.accountname.value,
+                number: this.accountnumber.value,
+                bank : this.state.inputBank,
+                userId : this.props.id
+            }
+            console.log(this.state.selectedFile, this.state.selectedFile.name);
+            fd.append('proof', this.state.selectedFile, this.state.selectedFile.name)
+            fd.append('data', JSON.stringify(data))
+            Axios.post(`http://localhost:2077/transaction/uploadpaymentproof `, fd)
+                .then(res=>{
+                    console.log(res);
+                    this.state.cart.map((product) => {
+                        Axios.post(`http://localhost:2077/transaction/add-order` , {
+                            userId : this.props.id,
+                            transactionId: this.state.transactionId,
+                            variantId: product.variantId,
+                            addressId: this.state.address.infoId
+                        }).then(res => {
+                            console.log(res.data);
+                            Axios.post(`http://localhost:2077/transaction/pay-time` , {
+                                userId : this.props.id,
+                            }).then(res => {
+                                console.log(res.data.result[0]);
+                                this.setState({deadline: res.data.result[0].paymentDeadline, status: res.data.result[0].status, transactionId: res.data.result[0].transactionId , activeTab: '3'})
+                                console.log(this.state.deadline)
+                                return (dispatch) => {
+                                    dispatch({
+                                        type : 'COMPLETE'
+                                    })
+                                }
+                            })
+                            
+                        }).catch(err => {
+                            console.log(err);
+                            
+                        })
+
+                        return null
+                    })
+                }).catch(err=>{
+                    console.log(err)
+                })
         }
     }
 
     renderInput = () => {
         if(this.state.activeTab === '1'){
             return(
-                <div className="col-6 px-5 pb-5">
+                <div className="col-12 px-5 pb-5">
                         <form className='form-group'>
                             <div className="form-row">
                                 <div className="col">
@@ -185,20 +329,111 @@ class Checkout extends Component {
 
         else if (this.state.activeTab === '2'){
             return(
-                <div>
-                    Total Payment : IDR {parseInt(this.state.details.totalPayment).toLocaleString('id')}
-                    Bank Account Number : 1234567890
+                <div className="col-12 px-5 pb-5 text-center">
+                    <h4>Bank Transfer Details</h4>
+                    <h5 className="font-weight-light">Please transfer the payment before : <b>{this.state.deadline} (GMT + 7)</b></h5>
+                    <div className="my-3">
+                        <h5>Total Payment :</h5>
+                        <h5 style={{color: "#007BFF"}}>Rp {parseInt(this.state.details.totalPayment).toLocaleString('id')}</h5>
+                        <h5>Status : <b>{this.state.status}</b></h5>
+                    </div>
+
+                    <div className="mb-3 pt-3 row">
+                        <h5 className="col-12">Bank Account Destination Details :</h5>
+                        <div className="col py-3">
+                            <img className="col my-3" src="image/472px-BCA_logo.png" alt="bca_logo" style={{width: '200px'}}/>
+                            <h5>1. BCA</h5>
+                            <h5>Bank Account Number : 123 456 7890</h5>
+                            <h5>Branch : Kebon Jeruk</h5>
+                            <h5>Account's Holder Name : PT. Cimo</h5>
+                        </div>
+
+                        <div className="col py-3">
+                            <img className="col my-3" src="image/Bank_Mandiri_logo.png" alt="bca_logo" style={{width: '200px'}}/>
+                            <h5>2. Mandiri</h5>
+                            <h5>Bank Account Number : 123 456 789 0123</h5>
+                            <h5>Branch : Kebon Jeruk</h5>
+                            <h5>Account's Holder Name : PT. Cimo</h5>
+                        </div>
+                    </div>
+
+                    <div className="my-3 form-row text-left">
+                        <div className="col-12">
+                            <h5>Bank Account Destination</h5>
+                        </div>
+
+                        <div className="col mb-3">
+                            <h5 className="font-weight-light">Account's Holder Name</h5>
+                            <input ref={(input) => {this.accountname = input}} type='text' className='form-control' required/>
+                        </div>
+
+                        <div className="col mb-3">
+                            <h5 className="font-weight-light">Account's Holder Number</h5>
+                            <input ref={(input) => {this.accountnumber = input}} type='text' className='form-control' required/>
+                        </div>
+
+
+                        <div className="col mb-3">
+                            <h5 className="font-weight-light">Bank Account Destination</h5>
+                            <select id="inputBank" class="form-control" onChange={(e) => this.setState({inputBank: e.target.value})}>
+                                <option selected>BCA</option>
+                                <option>Mandiri</option>
+                            </select>
+                            
+                        </div>
+
+                        <div className="col-12">
+                            <h5 className="font-weight-light">Please upload payment proof</h5>
+                            <input className="css-file-input" type='file' onChange={(e) => this.setState({selectedFile : e.target.files[0]})} id="paymentProof"/>
+                            <label className="btn btn-outline-primary" style={{cursor: 'pointer'}} for="paymentProof">Choose File</label>
+                            <h5 className="font-weight-light">{this.state.selectedFile.name}</h5>
+                            {this.state.selectedFile && this.accountname.value && this.state.inputBank ? 
+                            <button className="btn btn-primary mr-3" onClick={this.Proceed}>
+                            Proceed
+                            </button> 
+                            : 
+                            ''
+                            }
+                        </div>
+
+                    </div>
                 </div>
             )
         }
+
+        else {}
     } 
 
     render() {
+        console.log(this.state.cart);
+
+        if(this.state.activeTab === '3'){
+            return(
+                <div className="py-3" style={{paddingLeft: '15px', paddingRight: '15px', borderTop: '2px solid #1a1a1a'}}>
+                    <div className="col-12 px-5 pb-5 text-center">
+                        <div className="row">
+                            <div className='col mb-3'>
+                                <h1>Thank you for your purchase!</h1>
+                                <h4>Please kindly wait while your transaction details is being confirmed.</h4>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            <div className='col'>
+                                <h1>Status : <b>{this.state.status}</b></h1>
+                                <h4>You can now leave this page and check your transactions status from your account page</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )
+        }
+        
         return (
             <div style={{paddingLeft: '15px', paddingRight: '15px', borderTop: '2px solid #1a1a1a'}}>
                 <div className="row m-5">
-                    <div className="col-6 row m-0 p-0 text-center" style={{borderBottom: '2px solid grey'}}>
-                        <div className="col-4" 
+                    <div className="col-12 row m-0 p-0 text-center" style={{borderBottom: '2px solid grey'}}>
+                        <div className="col-6" 
                         style={{color: this.state.activeTab === '1' ? '#1a1a1a' : 'gray', 
                                 cursor: this.state.activeTab === '1' ? '' : 'pointer'}}
                         onClick={() => this.setState({activeTab: '1'})}>
@@ -206,22 +441,16 @@ class Checkout extends Component {
                         </div>
                         {
                             this.state.shipping === true ?
-                            <div className="col-4" style={{color: this.state.activeTab === '2' ? '#1a1a1a' : 'gray', 
+                            <div className="col-6" style={{color: this.state.activeTab === '2' ? '#1a1a1a' : 'gray', 
                                 cursor: this.state.activeTab === '2' || this.state.shipping === true ? 'pointer' : ''}}
                                 onClick={() => this.setState({activeTab: '2'})}>
                             <h5>Payment</h5>
                             </div> :
-                            <div className="col-4" style={{color: this.state.activeTab === '2' ? '#1a1a1a' : 'gray', 
+                            <div className="col-6" style={{color: this.state.activeTab === '2' ? '#1a1a1a' : 'gray', 
                                 cursor: this.state.activeTab === '2' && this.state.shipping === true ? 'pointer' : ''}}>
                             <h5>Payment</h5>
                         </div>
                         }
-                        <div className="col-4" 
-                        style={{color: this.state.activeTab === '3' ? '#1a1a1a' : 'gray', 
-                                cursor: this.state.activeTab === '3' && this.state.payment === true ? 'pointer' : ''}}
-                        onClick={() => this.setState({activeTab: '3'})}>
-                            <h5>Receipt</h5>
-                        </div>
                     </div>
                 </div>
                 <div className="row m-5">
@@ -244,6 +473,8 @@ const mapStateToProps = (state) => {
         account : state.user.account,
   
         region : state.locale.region,
+        complete : state.locale.complete,
+        payment: state.locale.payment,
   
         cartLength : state.cart.cartLength
     }

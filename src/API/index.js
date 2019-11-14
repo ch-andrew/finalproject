@@ -27,4 +27,6 @@ app.use('/cart' , cartRouter)
 
 app.use('/transaction' , transactionRouter)
 
+app.use('/files', express.static('uploads'))
+
 app.listen(port, console.log('Server is Online ...'))

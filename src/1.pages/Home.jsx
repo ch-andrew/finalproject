@@ -12,18 +12,20 @@ class Home extends Component {
 
     state = {
         products: [],
-        searchProducts: []
     }
 
     componentDidMount() {
         axios.get(
-            'http://localhost:2019/products'
+            'http://localhost:2077/products/all', {
+                params:{
+                    input : 'New Arrivals'
+                }
+            }
 
         ).then(res => {
             this.setState(
                 {
-                    products: res.data,
-                    searchProducts: res.data
+                    products: res.data.new,
                 }
             )
 
@@ -34,8 +36,8 @@ class Home extends Component {
     renderList = () => {
         // products = [{}, {}, {}]
         // product = {id, name, description, price, picture}
-        return this.state.searchProducts.map((product) => {
-            return <ProductItem barang={product} key={product.id}/>
+        return this.state.products.map((item) => {
+            return <ProductItem product={item} key={item.id}/>
         })
 
     }

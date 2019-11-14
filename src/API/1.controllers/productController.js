@@ -23,13 +23,32 @@ module.exports = {
                     join prices p on p.productId = products.id
                     join categories c on c.catId = products.categoryId`
 
-        db.query(sql, (err,result) => {
-            if(err) throw err
-            res.send({
-                status : '200',
-                products : result
+        let newArrivals = `select id, products.name, description, c.name as category, gender, IDR, SGD, MYR, defaultImage from products
+                            join prices p on p.productId = products.id
+                            join categories c on c.catId = products.categoryId
+                            order by dateAdded desc limit 4;`
+
+        if(req.query.input === 'New Arrivals'){
+            db.query(newArrivals, (err, result) => {
+                if(err) throw err
+                res.send({
+                    status : '200',
+                    new : result
+                })
             })
-        })
+        }
+
+        else {
+
+            db.query(sql, (err,result) => {
+                if(err) throw err
+                res.send({
+                    status : '200',
+                    products : result
+                })
+            })
+        }
+
     },
 
     getMenProducts: (req, res) => {
@@ -148,9 +167,8 @@ module.exports = {
                 if(result){
                     db.query(getCatID, (err2, result2) => {
                         if(err2) throw err2
-                        console.log(result2);
                         if(result2){
-                            let add = `insert into products value (0, '${req.body.name}', '${req.body.description}', '${req.body.defaultImage}', ${result2[0].catId})`
+                            let add = `insert into products value (0, '${req.body.name}', '${req.body.description}', '${req.body.defaultImage}', ${result2[0].catId} , '${req.body.date}')`
                             db.query(add, (err3, result3) => {
                                 if(err3) throw err3
                                 if(result3){

@@ -5,6 +5,7 @@ import {getCartLength} from '../redux/actions/cartActions'
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import Swal from 'sweetalert2'
 
 
 
@@ -287,11 +288,11 @@ class ProductDetail extends Component {
             else {
                 axios.post(`http://localhost:2077/cart/addtocart`, 
                 {
-                    data_userId,
-                    data_variantId,
-                    data_pricesId,
-                    data_quantity,
-                    data_size
+                    userId : data_userId,
+                    variantId: data_variantId,
+                    pricesId: data_pricesId,
+                    quantity: data_quantity,
+                    size: data_size
 
                 }
                 ).then((res)=> {
@@ -305,6 +306,19 @@ class ProductDetail extends Component {
                 console.log(this.state.selectedId);
             }
 
+            Swal.fire({
+                position: 'top',
+                icon: 'success',
+                title: `${this.state.selectedQty} items has been added to your cart`,
+                showClass: {
+                    popup: 'animated bounceInDown faster'
+                  },
+                  hideClass: {
+                    popup: 'animated bounceInUp faster'
+                  },
+                showConfirmButton: false,
+                timer: 1000
+            })
             this.checkCart()
 
             
@@ -425,7 +439,13 @@ class ProductDetail extends Component {
                 </div>
             )
         } else {
-            return <div><h1 className='text-center'>Loading</h1></div>
+            return (
+            <div className='text-center'>
+                <div className="spinner-border text-primary" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>
+            )
         }
     }
 }

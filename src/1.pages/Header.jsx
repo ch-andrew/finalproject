@@ -119,7 +119,7 @@ class Header extends Component {
 
             <Navbar color="white" light expand="md">
                 <div style={{width:"50px"}}>
-                  <Link className="navbar-brand" to="/"><img src="image/omega_logo.png" alt="omega" style={{width:"50px"}}/></Link>
+                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="omega" style={{width:"50px"}}/></Link>
                 </div>
 
                 <NavbarToggler onClick={this.toggle} />
@@ -197,7 +197,7 @@ class Header extends Component {
 
             <Navbar color="white" light expand="md">
                 <div style={{width:"50px"}}>
-                  <Link className="navbar-brand" to="/"><img src="image/omega_logo.png" alt="omega" style={{width:"50px"}}/></Link>
+                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="omega" style={{width:"50px"}}/></Link>
                 </div>
 
                 <NavbarToggler onClick={this.toggle} />
@@ -248,7 +248,7 @@ class Header extends Component {
 
             <Navbar color="white" light expand="md">
                 <div style={{width:"50px"}}>
-                  <Link className="navbar-brand" to="/"><img src="image/omega_logo.png" alt="omega" style={{width:"50px"}}/></Link>
+                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="cimo" style={{width: '50px'}}/></Link>
                 </div>
 
                 <NavbarToggler onClick={this.toggle} />

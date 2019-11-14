@@ -3,6 +3,7 @@ import Dashboard from '../2.components/Dashboard'
 import Footer from './Footer'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
+import { onLogOut } from '../redux/actions/userActions'
 
 class MyAccount extends Component {
     render() {
@@ -12,6 +13,7 @@ class MyAccount extends Component {
             return (
                 <div style={{fontFamily: "Roboto"}}>
                     <h1 className="text-center pt-5">My Account</h1>
+                    <button onClick={this.props.onLogOut}>LogOut</button>
                     <Dashboard/>
                     <Footer/>
                 </div>
@@ -36,4 +38,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-  export default connect(mapStateToProps)(MyAccount)
+  export default connect(mapStateToProps, {onLogOut})(MyAccount)

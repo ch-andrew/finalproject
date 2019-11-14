@@ -55,7 +55,7 @@ class App extends Component {
                     <Route path='/shop/all' exact component={ShopAll}/>
                     <Route path='/shop/men' exact component={ShopMen}/>
                     <Route path='/shop/women' exact component={ShopWomen}/>
-                    <Route path='/transaction' exact component={TransactionPage}/>
+                    <Route path='/transaction/:id' exact component={TransactionPage}/>
                 </BrowserRouter>
                 </div>
             )

@@ -57,7 +57,7 @@ class ShopWomen extends Component {
         return (
             <div style={{fontFamily : 'Roboto'}}>
                 <div className='row'>
-                    <h1 className='col-12 text-center'>ALL PRODUCTS</h1>
+                    <h1 className='col-12 text-center'>WOMEN'S</h1>
                     <div className='col-3 mt-3'>
 
                     </div>

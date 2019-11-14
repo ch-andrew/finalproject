@@ -3,7 +3,7 @@ ul li a {
 }
 
 ul li a:hover{
-    color: red;
+    color: #007BFF;
     text-decoration: none;
 }
 
@@ -16,6 +16,6 @@ div p {
 }
 
 .footer-email:hover {
-    color: red;
+    color: #007BFF;
     text-decoration: none;
 }

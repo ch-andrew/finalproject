@@ -1,12 +1,35 @@
 const db = require('../database')
-// var nodemailer = require('nodemailer')
+var nodemailer = require('nodemailer')
 // var { pdfcreate } = require('../3.helpers/html-pdf')
 // const fs = require('fs')
 
+
+let transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'covelgaming@gmail.com',
+        pass: 'gdzvmtbxmtabjbia'
+    },
+    tls : {
+        rejectUnauthorized: false
+    }
+})
+
 module.exports = {
+    checkUsers : (req, res) => {
+        let sql = `select * from users where email = '${req.body.email}'`
+
+        db.query(sql, (err, result) => {
+            if(err) throw err
+            res.send({
+                result
+            })
+        })
+    },
+
     register: (req, res) => {
         let sql = `select * from users where email = '${req.body.email}'`
-        let sql2 = `insert into users value (0, '${req.body.email}', '${req.body.password}', '${req.body.firstName}', '${req.body.lastName}' , 'free' , 0)`
+        let sql2 = `insert into users value (0, '${req.body.email}', '${req.body.password}', '${req.body.firstName}', '${req.body.lastName}' , 'free' , 0, 0)`
 
         db.query(sql, (err,result) => {
             if(err) throw err
@@ -20,6 +43,26 @@ module.exports = {
             }
             // Successfully Registered
             else {
+                let to = req.body.email
+                let fullname = req.body.firstName + ' ' + req.body.lastName
+
+                let mailOptions = {
+                    from : 'Cimo',
+                    to,
+                    subject: 'Secure Your Account - Verify Email Address',
+                    html: `<h1 style="color : #007BFF; text-align : center">Verifiy Your Email</h1> <br/>
+                    <p style="font-size: 18px; text-align : center">Hi ${fullname}, <br/>Please verify your email to secure your account. <br/>
+                    <a href='http://localhost:2077/auth/verify?email=${req.body.email}'>Verify Now</a></p>`
+                }
+                if(to){
+                    transporter.sendMail(mailOptions, (err, info) => {
+                        if(err) throw err
+                        res.send('Email Berhasil!')
+                    })
+                }else{
+                    res.send('Email kosong!')
+                }
+
                 db.query(sql2, (err2,result2) => {
                     if(err2) throw err2
                     res.send ({
@@ -31,9 +74,33 @@ module.exports = {
         })
     },
 
+    verify: (req, res) => {
+        let sql = `update users set isVerified = 1 where email = '${req.query.email}'`
+
+        db.query(sql, (err, result) => {
+            if(err) throw err
+            res.send({
+                status: '201',
+                success: 'Email is verified!'
+            })
+        })
+    },
+
+    subscribe: (req, res) => {
+        let sql = `update users set isVerified = 1 where email = '${req.query.email}'`
+
+        db.query(sql, (err, result) => {
+            if(err) throw err
+            res.send({
+                status: '201',
+                success: 'Email is verified!'
+            })
+        })
+    },
+
     login: (req, res) => {
         let sql = `select * from users where email = '${req.query.email}'`
-        let sql2 = `select * from users where password = '${req.query.password}'`
+        let sql2 = `select * from users where email = '${req.query.email}' and password = '${req.query.password}'`
 
         db.query(sql, (err, result) => {
             if(err) throw err
@@ -75,10 +142,8 @@ module.exports = {
         db.query(sql, (err, result) => {
             if(err) throw err
             if(result){
-                console.log(result);
                 db.query(sql2, (err2, result2) => {
                     if(err2) throw err2
-                    console.log(result2);
                     res.send({
                         user: result2,
                         info: result
@@ -89,8 +154,7 @@ module.exports = {
     },
 
     changeInformation: (req, res) => {
-        console.log(req.body);
-        
+
         let sql = `select * from userinformation where userId = ${req.body.userId}`
 
         let sql2 = `insert into userinformation values 

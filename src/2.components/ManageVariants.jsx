@@ -8,7 +8,7 @@ import {Table} from 'reactstrap'
 import moment from 'moment'
 
 
-class ManageProducts extends Component {
+class ManageVariants extends Component {
 
     state = {
         products: [],
@@ -46,9 +46,9 @@ class ManageProducts extends Component {
     // Mengambil (GET) data dari database
     getData = () => {
         Axios.get(
-            'http://localhost:2077/products/list' , {
+            'http://localhost:2077/products/list', {
                 params: {
-                    input: 'main'
+                    input: 'variants'
                 }
             }
 
@@ -135,19 +135,19 @@ class ManageProducts extends Component {
             return (
                 <div className='row'>
                     <div className='col mb-2 text-center'>
-                        <div className='btn-group'>
+                        {/* <div className='btn-group'>
                             <button className='btn btn-primary btn-lg'
                             onClick={() => this.setState({inputProduct: 'New'})}>
                                 Add a New Product
                             </button>
-                        </div>
-                        {/* <h5 className='d-inline mx-4' style={{color: '#007BFF'}}>or</h5>
+                        </div> */}
+                        {/* <h5 className='d-inline mx-4' style={{color: '#007BFF'}}>or</h5> */}
                         <div className='btn-group'>
-                            <button className='btn btn-outline-primary btn-lg'
+                            <button className='btn btn-primary btn-lg'
                             onClick={() => this.setState({inputProduct: 'Variant'})}>
                                 Add a Product Variant
                             </button>
-                        </div> */}
+                        </div>
                     </div>
     
                 </div>
@@ -239,7 +239,7 @@ class ManageProducts extends Component {
 
                     <div className='col-4 mb-2'>
                         <h5>Codes</h5>
-                        <input type="color" className='form-control' onChange={(e)=>{this.setState({inputColor: e.target.value})}}/>
+                        <input type="color" className='form-control' onChange={(e)=>{this.setState({inputColorCodes: e.target.value})}}/>
                         <input ref={(input) => {this.color = input}} type="text" className='form-control' placeholder="ex: Black" />
                     </div>
 
@@ -415,17 +415,19 @@ class ManageProducts extends Component {
                 selectedDesc: product.description,
                 selectedCategory: product.category,
                 selectedGender: product.gender,
+                selectedColor: product.color,
                 selectedPrice: {IDR: product.IDR, MYR: product.MYR, SGD: product.SGD},
-                selectedPict: product.defaultImage
+                selectedPict: product.image
             }
         )
+        
     }
 
     onDeleteClick = (idProduct) => {
         console.log(idProduct);
         
         Axios.post(`http://localhost:2077/products/delete` , {
-            input: 'main',
+            input: 'variants',
             id: idProduct
         })
 
@@ -436,22 +438,8 @@ class ManageProducts extends Component {
         this.setState({selectedId: 0})
     }
 
-    onSave = (idProduct) => {       
-        Axios.put(`http://localhost:2077/products/edit` , {
-            name: this.state.selectedName,
-            description: this.state.selectedDesc,
-            catName: this.state.inputCategory,
-            gender: this.state.inputGender,
-            IDR: this.state.selectedPrice.IDR,
-            MYR: this.state.selectedPrice.MYR,
-            SGD: this.state.selectedPrice.SGD,
-            defaultImage: this.state.selectedPict,
-            productId: idProduct
+    onSave = () => {
 
-        }).then(res => {
-            console.log(res.data);
-            this.getData()
-        })
     }
 
 
@@ -469,22 +457,17 @@ class ManageProducts extends Component {
                     <tbody key={idx}>
                         <td style={{width: '50px'}}>{idx}</td>
                         <td style={{width: '150px'}}>{product.name}</td>
-                        <td style={{width: '300px'}}>{product.description}</td>
                         <td style={{width: '150px'}}>{product.category}</td>
                         <td style={{width: '100px'}}>{product.gender}</td>
+                        <td style={{width: '100px'}}>{product.color}</td>
                         <td style={{width: '100px'}}>{product.IDR}</td>
                         <td style={{width: '100px'}}>{product.MYR}</td>
                         <td style={{width: '100px'}}>{product.SGD}</td>
-                        <td style={{width: '100px'}}><img src={product.defaultImage} alt={product.name} style={{width: '100px'}}/></td>
+                        <td style={{width: '100px'}}><img src={product.image} alt={product.name} style={{width: '100px'}}/></td>
                         <td style={{width: '100px'}}>
-                            <button className="btn btn-block btn-warning" 
-                                    style={{color: 'white'}}
-                                    onClick={() => this.onEditClick(idx, product)}
-                                    >EDIT
-                            </button>
                             <button className="btn btn-block btn-danger" 
                                     style={{color: 'white'}}
-                                    onClick={() => this.onDeleteClick(product.id)}
+                                    onClick={() => this.onDeleteClick(product.variantId)}
                                     >DELETE
                             </button>
                         </td>
@@ -509,27 +492,35 @@ class ManageProducts extends Component {
                             onChange={(e) => {this.setState({selectedDesc: e.target.value})}}/>
                         </td>
                         <td style={{width: '150px'}}>
-                            <select className="form-control" onChange={(e) => {this.setState({inputCategory: e.target.value})}}>
-                                {this.renderCategoryOption()}
-                            </select>
+                            <input type='text' 
+                            className='form-control'
+                            value={this.state.selectedCategory}
+                            onChange={(e) => {this.setState({selectedCategory: e.target.value})}}/>
                         </td>
                         <td style={{width: '100px'}}>
-                            <select className="form-control" onChange={(e) => {this.setState({inputGender: e.target.value})}}>
-                                {this.renderGenderOption()}
-                            </select>
+                            <input type='text' 
+                            className='form-control'
+                            value={this.state.selectedGender}
+                            onChange={(e) => {this.setState({selectedGender: e.target.value})}}/>
+                        </td>
+                        <td style={{width: '100px'}}>
+                            <input type='text' 
+                            className='form-control'
+                            value={this.state.selectedColor}
+                            onChange={(e) => {this.setState({selectedColor: e.target.value})}}/>
                         </td>
                         <td style={{width: '100px'}}>
                             <input type='text' 
                             className='form-control'
                             value={this.state.selectedPrice.IDR}
-                            onChange={(e) => {this.setState({selectedPrice: {IDR: e.target.value, MYR: this.state.selectedPrice.MYR, SGD: this.state.selectedPrice.SGD}})}}
+                            onChange={(e) => {this.setState({selectedPrice: {IDR: e.target.value}})}}
                             />
                         </td>
                         <td style={{width: '100px'}}>
                             <input type='text' 
                             className='form-control'
                             value={this.state.selectedPrice.MYR}
-                            onChange={(e) => {this.setState({selectedPrice: {MYR: e.target.value, IDR: this.state.selectedPrice.IDR, SGD: this.state.selectedPrice.SGD}})}}
+                            onChange={(e) => {this.setState({selectedPrice: {MYR: e.target.value}})}}
                             />
                         </td>
                         <td style={{width: '100px'}}>
@@ -537,7 +528,7 @@ class ManageProducts extends Component {
                             className='form-control'
                             value={this.state.selectedPrice.SGD}
                             style={{width: '100px'}}
-                            onChange={(e) => {this.setState({selectedPrice: {SGD: e.target.value, IDR: this.state.selectedPrice.IDR, MYR: this.state.selectedPrice.MYR}})}}
+                            onChange={(e) => {this.setState({selectedPrice: {SGD: e.target.value}})}}
                             />
                         </td>
                         <td style={{width: '100px'}}>
@@ -550,7 +541,7 @@ class ManageProducts extends Component {
                         <td style={{width: '100px'}}>
                         <button 
                                 className='btn btn-block btn-success'
-                                onClick={() => {this.onSave(product.id)}}
+                                onClick={() => {this.onSaveClick(product.id)}}
                             >
                                 SAVE
                             </button>
@@ -599,9 +590,9 @@ class ManageProducts extends Component {
                         <tr>
                             <th>NO</th>
                             <th>NAME</th>
-                            <th>DESC</th>
                             <th>CATEGORY</th>
                             <th>GENDER</th>
+                            <th>COLOR</th>
                             <th>IDR</th>
                             <th>MYR</th>
                             <th>SGD</th>
@@ -636,4 +627,4 @@ const mapStateToProps = (state) => {
     }
 }
 
-export default connect(mapStateToProps)(ManageProducts)
+export default connect(mapStateToProps)(ManageVariants)

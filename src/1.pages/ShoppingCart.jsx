@@ -8,6 +8,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import { getCartLength } from '../redux/actions'
 import Axios from 'axios'
 import Footer from './Footer'
+import {Redirect} from 'react-router-dom'
 
 class ShoppingCart extends Component {
 
@@ -158,13 +159,13 @@ class ShoppingCart extends Component {
                     )
                 }
                 else if(this.props.region === "Malaysia"){
-                    let subTotalMYR = 0
+                    let subTotalMYR = this.state.subtotal.TotalMYR
                     return(
                         <h5>Subtotal RM{subTotalMYR}</h5>
                     )
                 }
                 else if (this.props.region === "Singapore"){
-                    let subTotalSGD = 0
+                    let subTotalSGD = this.state.subtotal.totalSGD
                     return(
                         <h5>Subtotal S${subTotalSGD}</h5>
                     )
@@ -261,21 +262,10 @@ class ShoppingCart extends Component {
                     confirmButtonText: 'Proceed'
                   }).then((result) => {
                     if (result.value) {
-                        let currency
-                        if(this.props.region === 'Indonesia'){
-                            currency = 'IDR'
-                        }
-                        else if(this.props.region === 'Malaysia'){
-                            currency = 'MYR'
-                        }
-                        else{
-                            currency = 'SGD'
-                        }
-
                         Axios.post(`http://localhost:2077/transaction/checkout`, {
                             userId : this.props.id,
                             quantity: this.props.cartLength,
-                            currency: currency,
+                            currency: 'IDR',
                             total: totalIDR
                         }).then(res => {
                             window.location.href = `/transaction/${this.props.id}`;
@@ -289,7 +279,7 @@ class ShoppingCart extends Component {
             else if (this.props.region === 'Malaysia'){
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: `Total : ${totalMYR.toLocaleString('en')}`,
+                    html: `<div>Number of items : ${this.props.cartLength} <br/>Total payment for this order : RM${totalMYR.toFixed(2)}</div>`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -297,11 +287,17 @@ class ShoppingCart extends Component {
                     confirmButtonText: 'Yes, delete it!'
                   }).then((result) => {
                     if (result.value) {
-                      Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                      )
+                        
+                        Axios.post(`http://localhost:2077/transaction/checkout`, {
+                            userId : this.props.id,
+                            quantity: this.props.cartLength,
+                            currency: 'MYR',
+                            total: totalMYR.toFixed(2)
+                        }).then(res => {
+                            window.location.href = `/transaction/${this.props.id}`;
+                        }).catch(err => {
+                            console.log(err);
+                        })
                     }
                 })
             }
@@ -309,7 +305,7 @@ class ShoppingCart extends Component {
             else if (this.props.region === 'Singapore'){
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: `Total : ${totalSGD.toLocaleString('en')}`,
+                    html: `<div>Number of items : ${this.props.cartLength} <br/>Total payment for this order : RM${totalSGD.toFixed(2)}</div>`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
@@ -317,11 +313,16 @@ class ShoppingCart extends Component {
                     confirmButtonText: 'Yes, delete it!'
                   }).then((result) => {
                     if (result.value) {
-                      Swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                      )
+                        Axios.post(`http://localhost:2077/transaction/checkout`, {
+                            userId : this.props.id,
+                            quantity: this.props.cartLength,
+                            currency: 'SGD',
+                            total: totalSGD.toFixed(2)
+                        }).then(res => {
+                            window.location.href = `/transaction/${this.props.id}`;
+                        }).catch(err => {
+                            console.log(err);
+                        })
                     }
                 })
             }
@@ -415,7 +416,7 @@ class ShoppingCart extends Component {
             if(this.props.email && this.state.subtotal && this.state.products.length > 0){
                 return (
                     <div>
-                    <div className='container' style={{fontFamily : 'Roboto'}}>
+                    <div className='container my-5' style={{fontFamily : 'Roboto'}}>
                     {/* RENDERING LIST DATA */}
                         <div className="row">
                             <h1 className='col-12 text-center'>{this.props.cartLength > 1 ? `You have ${this.props.cartLength} items in your cart:` : `You have ${this.props.cartLength} item in your cart:`}</h1>
@@ -434,9 +435,13 @@ class ShoppingCart extends Component {
                 )
             }
 
+            else if(!this.props.email){
+                return <Redirect to="/"/>
+            }
+
             else {
                 return(
-                    <div className='container' style={{fontFamily : 'Roboto'}}>
+                    <div className='container my-5' style={{fontFamily : 'Roboto'}}>
                         <div className="row">
                             <div className="col text-center">
                                 <h1>

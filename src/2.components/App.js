@@ -14,6 +14,8 @@ import ShopWomen from '../1.pages/Shop Women/ShopWomen'
 import AdminPage from '../1.pages/AdminPage'
 import TransactionPage from '../1.pages/TransactionPage'
 import MyAccount from '../1.pages/MyAccount'
+import InfoPage from '../1.pages/InfoPage'
+import ShopNew from '../1.pages/ShopNew'
 
 import { connect } from 'react-redux';
 import {keepLogin} from '../redux/actions'
@@ -55,7 +57,9 @@ class App extends Component {
                     <Route path='/shop/all' exact component={ShopAll}/>
                     <Route path='/shop/men' exact component={ShopMen}/>
                     <Route path='/shop/women' exact component={ShopWomen}/>
+                    <Route path='/shop/new' exact component={ShopNew}/>
                     <Route path='/transaction/:id' exact component={TransactionPage}/>
+                    <Route path='/info' exact component={InfoPage}/>
                 </BrowserRouter>
                 </div>
             )

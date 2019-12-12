@@ -9,19 +9,19 @@ import {
 
 const items = [
   {
-    src: 'image/carousel_1.png',
-    altText: 'MaretMantap',
-    caption: 'MaretMantap'
+    src: 'image/carousel1.png',
+    altText: 'Carousel1',
+    caption: ''
   },
   {
-    src: 'image/carousel_2.jpg',
-    altText: 'MaretMantap',
-    caption: 'MaretMantap'
+    src: 'image/carousel2.png',
+    altText: 'Carousel2',
+    caption: ''
   },
   {
-    src: 'image/carousel_3.jpg',
-    altText: 'MaretMantap',
-    caption: 'MaretMantap'
+    src: 'image/carousel3.png',
+    altText: 'Carousel3',
+    caption: ''
   }
 ];
 
@@ -87,7 +87,7 @@ class CarouselHome extends Component {
       >
         <CarouselIndicators items={items} activeIndex={activeIndex} onClickHandler={this.goToIndex} />
         {slides}
-        <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous} />
+        <CarouselControl style={{color: 'black'}} direction="prev" directionText="Previous" onClickHandler={this.previous} />
         <CarouselControl direction="next" directionText="Next" onClickHandler={this.next} />
       </Carousel>
     );

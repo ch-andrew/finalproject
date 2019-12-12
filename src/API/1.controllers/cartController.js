@@ -44,8 +44,6 @@ module.exports = {
     },
 
     addToCart : (req, res) => {
-        console.log(req.body);
-        
         let sql = `insert into cart values (0, ${req.body.userId}, ${req.body.variantId}, ${req.body.pricesId}, ${req.body.quantity} , '${req.body.size}' , 0)`
 
         db.query(sql, (err, result) => {

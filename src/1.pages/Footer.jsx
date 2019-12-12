@@ -11,7 +11,7 @@ class Footer extends Component {
 
                         <div className="row m-5">
 
-                            <div className="col-3 mt-md-0 mt-3">
+                            <div className="col-4 mt-md-0 mt-3">
                                 <h5 className="text-uppercase">Explore</h5>
                                 <ul className="list-unstyled">
                                     <li>
@@ -29,12 +29,12 @@ class Footer extends Component {
                                 </ul>
                             </div>
 
-                            <div className="col-3 mt-md-0 mt-3">
+                            <div className="col-4 mt-md-0 mt-3">
                                 <h5 className="text-uppercase">About</h5>
-                                <p>Here you can use rows and columns to organize your footer content.</p>
+                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi et adipisci tempore fuga accusamus! Necessitatibus, modi.</p>
                             </div>
 
-                            <div className="col-3 mt-md-0 mt-3">
+                            <div className="col-4 mt-md-0 mt-3">
                                 <h5 className="text-uppercase">Contact</h5>
                                 <b>Phone Support</b>
                                 <p>
@@ -48,7 +48,7 @@ class Footer extends Component {
                                 </p>
                             </div>
 
-                            <div className="col-3 mt-md-0 mt-3">
+                            {/* <div className="col-3 mt-md-0 mt-3">
                                 <h5 className="text-uppercase">Subscribe to our newsletter</h5>
                                 <p>
                                     By entering your email address below, you consent to receiving our newsletter with access to our latest collections, events and initiatives.
@@ -61,7 +61,7 @@ class Footer extends Component {
                                     </div>
 
                                 </form>
-                            </div>
+                            </div> */}
 
                         </div>
 

@@ -34,9 +34,10 @@ class Register extends Component {
     loadingButton = () => {
         if(this.props.isLoading){
             return (
-                <div className="spinner-grow" role='status'>
-                    <span className="sr-only"></span>
-                </div>
+                <button className="btn-block btn btn-primary mb-2" type="button" disabled>
+                    <span className="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"></span>
+                    Registering...
+                </button>
                 
             )
         }

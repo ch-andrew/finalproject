@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import Axios from 'axios'
-import {Link, NavLink} from 'react-router-dom'
+import {Link} from 'react-router-dom'
 import {connect} from 'react-redux'
 import { getCartLength } from '../redux/actions'
+import { onLogOut } from '../redux/actions/userActions'
 import './main.css'
 import {
     Collapse,
@@ -86,13 +87,9 @@ class Header extends Component {
       if(!this.props.email){
         return (
           <div className="fixed-top border-bottom border-dark" style={{fontFamily:"Roboto"}}>
-  
-            <Navbar style={{backgroundColor:"black"}}>
-              <Nav>
-                <NavItem className="text-center" style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans"}}>Free Worldwide Shipping On Apparel Over $75.
-                  <Link to="/" style={{color:"white", fontWeight:"bold"}}>Learn more.</Link>
-                </NavItem>
 
+            <Navbar style={{backgroundColor:"black"}}>
+              <Nav className="mx-auto">
                 <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans"}}>
                     <Dropdown nav inNavbar isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                       <DropdownToggle nav style={{border: 'none', backgroundColor: 'black', margin: 0, padding: 0}}>
@@ -119,30 +116,25 @@ class Header extends Component {
 
             <Navbar color="white" light expand="md">
                 <div style={{width:"50px"}}>
-                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="omega" style={{width:"50px"}}/></Link>
+                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="cimo" style={{width:"50px"}}/></Link>
                 </div>
 
                 <NavbarToggler onClick={this.toggle} />
                 <Collapse isOpen={this.state.isOpen} navbar>
                   <Nav className="mx-auto" navbar style={{fontSize:"1.2em", fontWeight:"bold"}}>
                     <NavItem>
-                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'All' ? 'red' : 'black'}} to="/shop/All"
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'All' ? '#007BFF' : 'black'}} to="/shop/All"
                             onClick={() => this.setState({selectedNav: 'All'})}>All Products
                       </Link>
                     </NavItem>
                     <NavItem>
-                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Men' ? 'red' : 'black'}} to="/shop/men"
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Men' ? '#007BFF' : 'black'}} to="/shop/men"
                             onClick={() => this.setState({selectedNav: 'Men'})}>Men
                       </Link>
                     </NavItem>
                     <NavItem>
-                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Women' ? 'red' : 'black'}} to="/shop/women"
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Women' ? '#007BFF' : 'black'}} to="/shop/women"
                             onClick={() => this.setState({selectedNav: 'Women'})}>Women
-                      </Link>
-                    </NavItem>
-                    <NavItem>
-                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Outlet' ? 'red' : 'black'}} to="/"
-                            onClick={() => this.setState({selectedNav: 'Outlet'})}>Outlet
                       </Link>
                     </NavItem>
                   </Nav>
@@ -151,12 +143,6 @@ class Header extends Component {
                   <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
                     <Link className="navbar-brand right" style={{color: "black"}} to='/login'><AccountBoxIcon style={{fontSize: "36px"}}/></Link>
                   </div>
-
-                  <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
-                    <Link className="navbar-brand right" style={{color: "black"}} to='/shoppingcart'><ShoppingCartIcon style={{fontSize: "36px"}}/></Link>
-                  </div>
-
-
                 </Collapse>
             </Navbar>
           </div>
@@ -166,11 +152,7 @@ class Header extends Component {
           <div className="fixed-top border-bottom border-dark" style={{fontFamily:"Roboto"}}>
   
             <Navbar style={{backgroundColor:"black"}}>
-              <Nav className="mx-auto">
-                <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans"}}>Free Worldwide Shipping On Apparel Over $75.
-                <Link to="/" style={{color:"white", fontWeight:"bold"}}>Learn more.</Link>
-                </NavItem>
-
+              <Nav className="ml-auto">
                 <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans"}}>
                     <Dropdown nav inNavbar isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
                       <DropdownToggle nav style={{border: 'none', backgroundColor: 'black', margin: 0, padding: 0}}>
@@ -192,41 +174,47 @@ class Header extends Component {
                       </DropdownMenu>
                     </Dropdown>
                 </NavItem>
+                <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans", marginLeft: "750px"}}>
+                    <b style={{cursor: 'pointer'}} onClick={this.props.onLogOut}>Logout</b>
+                </NavItem>
               </Nav>
             </Navbar>
 
             <Navbar color="white" light expand="md">
                 <div style={{width:"50px"}}>
-                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="omega" style={{width:"50px"}}/></Link>
+                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="cimo" style={{width:"50px"}}/></Link>
                 </div>
 
                 <NavbarToggler onClick={this.toggle} />
                 <Collapse isOpen={this.state.isOpen} navbar>
                   <Nav className="mx-auto" navbar style={{fontSize:"1.2em", fontWeight:"bold"}}>
-                    <NavItem>
-                      <NavLink className="nav-link mr-4" style={{color: "black"}} to="/shop/all">All Products</NavLink>
+                  <NavItem>
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'All' ? '#007BFF' : 'black'}} to="/shop/All"
+                            onClick={() => this.setState({selectedNav: 'All'})}>All Products
+                      </Link>
                     </NavItem>
                     <NavItem>
-                      <NavLink className="nav-link mx-4" style={{color: "black"}} to="/shop/men">Men</NavLink>
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Men' ? '#007BFF' : 'black'}} to="/shop/men"
+                            onClick={() => this.setState({selectedNav: 'Men'})}>Men
+                      </Link>
                     </NavItem>
                     <NavItem>
-                      <NavLink className="nav-link mx-4" style={{color: "black"}} to="/shop/women">Women</NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink className="nav-link ml-4" style={{color: "black"}} to="/">Outlet</NavLink>
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Women' ? '#007BFF' : 'black'}} to="/shop/women"
+                            onClick={() => this.setState({selectedNav: 'Women'})}>Women
+                      </Link>
                     </NavItem>
                   </Nav>
                   
-                  <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
-                      <Link className="navbar-brand right" style={{color: "black"}} to='/admin'><AccountBoxIcon active style={{fontSize: "36px"}}/></Link>
-                  </div>
-
                   <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
                     <Badge badgeContent={this.props.cartLength} color="primary">
                       <Link className="navbar-brand right" style={{color: "black"}} to='/shoppingcart'>
                         <ShoppingCartIcon style={{fontSize: "36px"}}/>
                       </Link>
                     </Badge>
+                  </div>
+                  
+                  <div style={{marginRight: "-1rem", marginLeft: "1rem", width:"50px"}}>
+                      <Link className="navbar-brand right" style={{color: "black"}} to='/admin'><AccountBoxIcon active style={{fontSize: "36px"}}/></Link>
                   </div>
 
                 </Collapse>
@@ -239,32 +227,56 @@ class Header extends Component {
           <div className="fixed-top border-bottom border-dark" style={{fontFamily:"Roboto"}}>
   
             <Navbar style={{backgroundColor:"black"}}>
-              <Nav className="mx-auto">
-                <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans"}}>Free Worldwide Shipping On Apparel Over $75.
-                <Link to="/" style={{color:"white", fontWeight:"bold"}}>Learn more.</Link>
+              <Nav className="ml-auto">
+              <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans"}}>
+                    <Dropdown nav inNavbar isOpen={this.state.dropdownOpen} toggle={this.toggleDropdown}>
+                      <DropdownToggle nav style={{border: 'none', backgroundColor: 'black', margin: 0, padding: 0}}>
+                        Region : {this.props.region}
+                      </DropdownToggle>
+                      <DropdownMenu>
+                        <DropdownItem defaultValue="Indonesia" className={this.props.region ==='Indonesia' ? 'active' : ''} 
+                        onClick={e => this.props.changeRegion(e.target.innerHTML)}>
+                          Indonesia                         
+                        </DropdownItem>
+                        <DropdownItem className={this.props.region ==='Malaysia' ? 'active' : ''}
+                        onClick={e => this.props.changeRegion(e.target.innerHTML)}>
+                          Malaysia                            
+                        </DropdownItem>
+                        <DropdownItem className={this.props.region ==='Singapore' ? 'active' : ''}
+                        onClick={e => this.props.changeRegion(e.target.innerHTML)}>
+                          Singapore                           
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </Dropdown>
+                </NavItem>
+                <NavItem style={{color:"white", fontSize:"12px" , fontFamily:"Open Sans", marginLeft: "750px"}}>
+                    <b style={{cursor: 'pointer'}} onClick={this.props.onLogOut}>Logout</b>
                 </NavItem>
               </Nav>
             </Navbar>
 
             <Navbar color="white" light expand="md">
                 <div style={{width:"50px"}}>
-                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="cimo" style={{width: '50px'}}/></Link>
+                  <Link className="navbar-brand" to="/"><img src="image/CIMO.png" alt="cimo" style={{width:"50px"}}/></Link>
                 </div>
 
                 <NavbarToggler onClick={this.toggle} />
                 <Collapse isOpen={this.state.isOpen} navbar>
                   <Nav className="mx-auto" navbar style={{fontSize:"1.2em", fontWeight:"bold"}}>
-                    <NavItem>
-                      <NavLink className="nav-link mr-4" style={{color: "black"}} to="/shop/all">All Products</NavLink>
+                  <NavItem>
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'All' ? '#007BFF' : 'black'}} to="/shop/All"
+                            onClick={() => this.setState({selectedNav: 'All'})}>All Products
+                      </Link>
                     </NavItem>
                     <NavItem>
-                      <NavLink className="nav-link mx-4" style={{color: "black"}} to="/shop/men">Men</NavLink>
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Men' ? '#007BFF' : 'black'}} to="/shop/men"
+                            onClick={() => this.setState({selectedNav: 'Men'})}>Men
+                      </Link>
                     </NavItem>
                     <NavItem>
-                      <NavLink className="nav-link mx-4" style={{color: "black"}} to="/shop/women">Women</NavLink>
-                    </NavItem>
-                    <NavItem>
-                      <NavLink className="nav-link ml-4" style={{color: "black"}} to="/">Outlet</NavLink>
+                      <Link className="nav-link mx-4" style={{color : this.state.selectedNav === 'Women' ? '#007BFF' : 'black'}} to="/shop/women"
+                            onClick={() => this.setState({selectedNav: 'Women'})}>Women
+                      </Link>
                     </NavItem>
                   </Nav>
                   
@@ -317,4 +329,4 @@ const changeRegion = (region) => {
 }
 }
 
-export default connect(mapStateToProps, {changeRegion, getCartLength})(Header)
+export default connect(mapStateToProps, {changeRegion, getCartLength, onLogOut})(Header)

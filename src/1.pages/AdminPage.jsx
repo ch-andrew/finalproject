@@ -14,7 +14,6 @@ class AdminPage extends Component {
                 <div style={{fontFamily: "Roboto"}}>
                     <h1 className="text-center pt-5">Admin Page</h1>
                     <h4 className="text-center pt-2">Welcome back, {this.props.firstName}</h4>
-                    <button onClick={this.props.onLogOut}>LogOut</button>
                     <Dashboard/>
                     <Footer/>
                 </div>

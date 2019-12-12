@@ -41,55 +41,6 @@ class Home extends Component {
         })
 
     }
-
-    // Search / Filter
-    onSearchClick = () => {
-        let input_name = this.name.value
-        let input_min = parseInt(this.minimum.value)
-        let input_max = parseInt(this.maximum.value)
-
-        // input_name lowerCase = O -> o
-        // product.name lowerCase : Product One -> product one
-        
-        let hasilFilter = this.state.products.filter((objectOfProducts)=>{
-            if (input_name && input_min && input_max) {
-                return objectOfProducts.name.toLowerCase().includes(input_name.toLowerCase()) &&
-                parseInt(objectOfProducts.price) >= input_min &&
-                parseInt(objectOfProducts.price) <= input_max
-            } else if (input_name && input_min) {
-                return objectOfProducts.name.toLowerCase().includes(input_name.toLowerCase()) &&
-                parseInt(objectOfProducts.price) >= input_min
-            } else if (input_name && input_max) {
-                return objectOfProducts.name.toLowerCase().includes(input_name.toLowerCase()) &&
-                parseInt(objectOfProducts.price) <= input_max
-            } else if (input_min && input_max) { 
-                return parseInt(objectOfProducts.price) >= input_min &&
-                parseInt(objectOfProducts.price) <= input_max
-            } else if (input_name) {
-                return objectOfProducts.name.toLowerCase().includes(input_name.toLowerCase())
-            } else if (input_min) {
-                return parseInt(objectOfProducts.price) >= input_min
-            } else if (input_max) {
-                return parseInt(objectOfProducts.price) <= input_max
-            } else {return 0}
-        })
-        this.setState({searchProducts: hasilFilter})
-    }
-
-    // Reset
-    onResetClick = () => {
-        // prevState = state saat ini
-        this.setState((prevState) => {
-            return {
-                searchProducts: prevState.products
-            }
-        })
-    }
-
-    // Clean
-    // onCleanClick = () => {
-    //     this.setState({searchProducts: []})
-    // }
     
     render() {
         return (
@@ -102,41 +53,25 @@ class Home extends Component {
                         <div class="col-4 p-0 css-container">
                             <div className='text-center'>
                                 <a href="/shop/men">
-                                    <img src="image/header1.jpg" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
+                                    <img src="image/SHOP MEN.png" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
                                 </a>
                             </div>
                         </div>
                         <div class="col-4 p-0 css-container">
                             <div className='text-center'>
-                                <a href="/shop/men">
-                                    <img src="image/header2.jpg" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
+                                <a href="/shop/new">
+                                    <img src="image/SHOP NEW.png" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
                                 </a>
                             </div>
                         </div>
                         <div class="col-4 p-0 css-container">
                             <div className='text-center'>
-                                <a href="/shop/men">
-                                <   img src="image/header3.jpg" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
+                                <a href="/shop/women">
+                                <   img src="image/SHOP WOMEN.png" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
                                 </a>
                             </div>
                         </div>
                     </div>
-                
-                    {/* <div className="col mx-0 p-0">
-                        <a href="/" className="">
-                            <img src="image/header1.jpg" className="img-fluid" alt="First" style={{maxHeight: '650px'}}/>
-                        </a>
-                    </div>
-                    <div className="col mx-0 p-0">
-                        <a href="/" className="">
-                            <img src="image/header2.jpg" className="img-fluid" alt="Second" style={{maxHeight: '650px'}}/>
-                        </a>
-                    </div>
-                    <div className="col mx-0 p-0">
-                        <a href="/" className="">
-                            <img src="image/header3.jpg" className="img-fluid" alt="Third" style={{height: '650px'}}/>
-                        </a>
-                    </div> */}
 
                 <div className="text-center mx-auto my-4">
                     <h1 style={{textDecoration:"underline", fontFamily:"Playfair Display, serif", fontSize:"4em"}}>New Arrivals</h1>

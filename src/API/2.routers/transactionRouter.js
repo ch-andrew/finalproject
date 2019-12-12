@@ -31,7 +31,11 @@ router.post('/uploadpaymentproof', upload.single('proof'), transactionController
 
 router.get('/' , transactionController.getTransactions)
 
-router.post('/add-order' , transactionController.convertCart)
+router.get('/cart' , transactionController.getCheckoutCart)
+
+router.post('/add-order' , transactionController.addOrder)
+
+router.post('/add-conn' , transactionController.convertCart)
 
 router.post('/checkout', transactionController.checkout)
 
@@ -40,5 +44,7 @@ router.post('/status', transactionController.changeStatus)
 router.post('/pay-time', transactionController.transactionHandler)
 
 router.get('/details', transactionController.getDetails)
+
+router.get('/orders' , transactionController.getOrders)
 
 module.exports = router

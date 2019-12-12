@@ -6,6 +6,7 @@ import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import Swal from 'sweetalert2'
+import {Link} from 'react-router-dom'
 
 
 
@@ -136,15 +137,31 @@ class ProductDetail extends Component {
         if(this.state.variants){
 
             let inputQty = this.state.selectedQty
+
+            if (inputQty === 0){
+
+                return (
+                    <div className='col'>
+                        <h5 className="mb-1">Quantity</h5>
+                            <RemoveIcon style={{backgroundColor: '#1a1a1a', color: 'white'}}/>
+                            <span className="mx-3 text-muted">{this.state.selectedQty}</span>
+                            <AddIcon style={{backgroundColor: '#1a1a1a', color: 'white', cursor: 'pointer'}} onClick={() => this.setState({selectedQty: inputQty + 1})}/>
+                    </div>
+                )
+            }
+
+            else {
+
+                return (
+                    <div className='col'>
+                        <h5 className="mb-1">Quantity</h5>
+                            <RemoveIcon style={{backgroundColor: '#1a1a1a', color: 'white', cursor: 'pointer'}} onClick={() => this.setState({selectedQty: inputQty - 1})}/>
+                            <span className="mx-3 text-muted">{this.state.selectedQty}</span>
+                            <AddIcon style={{backgroundColor: '#1a1a1a', color: 'white', cursor: 'pointer'}} onClick={() => this.setState({selectedQty: inputQty + 1})}/>
+                    </div>
+                )
+            }
             
-            return (
-                <div className='col'>
-                    <h5 className="mb-1">Quantity</h5>
-                        <RemoveIcon style={{backgroundColor: '#1a1a1a', color: 'white', cursor: 'pointer'}} onClick={() => this.setState({selectedQty: inputQty - 1})}/>
-                        <span className="mx-3 text-muted">{this.state.selectedQty}</span>
-                        <AddIcon style={{backgroundColor: '#1a1a1a', color: 'white', cursor: 'pointer'}} onClick={() => this.setState({selectedQty: inputQty + 1})}/>
-                </div>
-            )
         }
 
         else {
@@ -216,17 +233,33 @@ class ProductDetail extends Component {
 
     renderAddtoCart = () => {
         if(this.state.variants){
-            return (
-                <div className='col'>
-                    {this.renderPrice()}
-                    <button className="btn btn-block text-center" 
-                    style={{backgroundColor: '#007BFF', color: 'white'}}
-                    onClick={() => this.onAddtoCart()}>
-                        <ShoppingCartIcon className="mr-1"/>
-                        Add to Cart
-                    </button>
-                </div>
-            )
+            if(this.state.selectedQty === 0){
+                return( 
+                    <div className='col'>
+                        {this.renderPrice()}
+                        <button className="btn btn-block text-center" 
+                        style={{backgroundColor: '#007BFF', color: 'white'}}
+                        onClick={() => this.onAddtoCart()} disabled>
+                            <ShoppingCartIcon className="mr-1"/>
+                            Add to Cart
+                        </button>
+                    </div>
+                )
+            }
+
+            else {
+                return (
+                    <div className='col'>
+                        {this.renderPrice()}
+                        <button className="btn btn-block text-center" 
+                        style={{backgroundColor: '#007BFF', color: 'white'}}
+                        onClick={() => this.onAddtoCart()}>
+                            <ShoppingCartIcon className="mr-1"/>
+                            Add to Cart
+                        </button>
+                    </div>
+                )
+            }
         }
 
         else {
@@ -432,13 +465,24 @@ class ProductDetail extends Component {
     render(){
 
         // Ketika product bukan null
-        if(this.state.product){
+        if(this.state.product && this.props.email){
             return (
                 <div className='col-8 my-5 mx-auto'>
                     {this.renderCard()}
                 </div>
             )
-        } else {
+        }
+        
+        else if(!this.props.email){
+            return (
+                <div className='col-12 my-5 text-center'>
+                    <h4>Sorry!, We only allow registered customers to purchase our products!</h4>
+                    <h4 className="mt-2">Create one<Link to={`/register`}> here</Link>! It's free</h4>
+                </div>
+            )
+        }
+        
+        else {
             return (
             <div className='text-center'>
                 <div className="spinner-border text-primary" role="status">

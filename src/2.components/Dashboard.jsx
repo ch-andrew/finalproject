@@ -3,9 +3,10 @@ import Axios from 'axios'
 import {connect} from 'react-redux'
 // import Swal from 'sweetalert2'
 // import {Redirect} from 'react-router-dom'
-import { TabContent, TabPane, Nav, NavItem, NavLink}from 'reactstrap';
+import { TabContent, TabPane, Nav, NavItem, NavLink, Table}from 'reactstrap';
 import classnames from 'classnames';
 import ManageProducts from './ManageProducts'
+import ManageVariants from './ManageVariants'
 import Transactions from './Transactions'
 
 class Dashboard extends Component {
@@ -14,11 +15,17 @@ class Dashboard extends Component {
         activeTab: '1',
         pass: true,
         user: {},
-        userInfo : {}
+        userInfo : {},
+        orders: {},
+        transaction: {}
     }
 
     componentDidMount() {
         this.getData()
+
+        if(this.props.account !== 'admin'){
+            this.getOrders()
+        }
     }
 
     getData = () => {
@@ -36,6 +43,34 @@ class Dashboard extends Component {
             console.log(err);
         })
     }
+
+    getOrders = () => {
+        
+        Axios.get(`http://localhost:2077/transaction/orders` , 
+        {
+            params: {
+                userId : this.props.id
+            }
+        }).then(res => {
+            this.setState({orders: res.data})
+            console.log(this.state.orders);
+            Axios.get(`http://localhost:2077/transaction/details` , {
+                params: {
+                    userId : this.props.id
+                }
+            }).then(res => {
+                console.log(res.data.result);
+                
+                this.setState({transaction: res.data.result[0]})
+                console.log(this.state.transaction);
+                
+            })
+        }).catch(err => {
+            console.log(err);
+        })
+    }
+
+    
 
     passwordChecker = () => {
         if(this.password.value === this.confirmPassword.value || (this.password.value === '' && this.confirmPassword.value ==='')){
@@ -64,8 +99,7 @@ class Dashboard extends Component {
     onSave = () => {
 
         
-        var inputCountry = document.getElementById('inputCountry').value
-
+        
         if(this.state.activeTab === '2'){
             this.passwordChecker()
         }
@@ -76,26 +110,45 @@ class Dashboard extends Component {
             Axios.post(`http://localhost:2077/auth/change-information` , {
                 userId : this.props.id,
                 type : 'changeUser',
-                firstName : this.firstName.value,
-                lastName : this.lastName.value,
-                email : this.email.value,
+                firstName : this.state.user.firstName,
+                lastName : this.state.user.lastName,
+                email : this.state.user.email,
                 password: this.password.value
             })
+            this.getData()
         }
+
         else 
         {
+            var inputCountry = document.getElementById('inputCountry').value
             Axios.post(`http://localhost:2077/auth/change-information` , {
                 userId : this.props.id,
-                firstName : this.firstName.value,
-                lastName : this.lastName.value,
-                shippingAddress : this.shipping.value,
-                city : this.city.value,
-                province : this.province.value,
-                zipCode : this.zipCode.value,
+                type: 'changeInfo',
+                firstName : this.state.userInfo.firstName,
+                lastName : this.state.userInfo.lastName,
+                shippingAddress : this.state.userInfo.shippingAddress,
+                city : this.state.userInfo.city,
+                province : this.state.userInfo.province,
+                zipCode : this.state.userInfo.zipCode,
                 country : inputCountry,
-                phoneNumber: this.phoneNumber.value
+                phoneNumber: this.state.userInfo.phoneNumber,
             })
+            this.getData()
         }
+    }
+
+    renderList = () => {
+        return this.state.orders.map((product) => {
+            return (
+                <tbody>
+                        <td>{product.name}</td>
+                        <td>{product.color}</td>
+                        <td>{product.size}</td>
+                        <td>{product.quantity}</td>
+                        <td><img src={product.defaultImage} alt={product.name} style={{width: '100px'}}/></td>
+                </tbody>
+            )
+        })
     }
 
     renderAccountInfo = () => {
@@ -117,18 +170,18 @@ class Dashboard extends Component {
                         <div className="my-3 form-row">
                             <div className="col">
                                 <h5>First Name</h5>
-                                <input ref={(input) => {this.firstName = input}} type='text' value={this.state.user.firstName} className='form-control'/>
+                                <input onChange={(e) => {this.setState({user: {firstName: e.target.value , lastName: this.state.user.lastName, email: this.state.user.email}})}} type='text' value={this.state.user.firstName} className='form-control'/>
                             </div>
                             <div className="col">
                                 <h5>Last Name</h5>
-                                <input ref={(input) => {this.lastName = input}} type='text' value={this.state.user.lastName} className='form-control'/>
+                                <input onChange={(e) => {this.setState({user: {firstName: this.state.user.firstName, lastName: e.target.value, email: this.state.user.email}})}} type='text' value={this.state.user.lastName} className='form-control'/>
                             </div>
                         </div>
                         
                         <div className="my-3 form-row">
                             <div className="col">
                                 <h5>Email Address</h5>
-                                <input ref={(input) => {this.email = input}} type='text'  value={this.state.user.email} className='form-control'/>
+                                <input onChange={(e) => {this.setState({user: {firstName: this.state.user.firstName, lastName: this.state.user.lastName, email: e.target.value}})}}  type='text'  value={this.state.user.email} className='form-control'/>
                             </div>
                         </div>
 
@@ -157,42 +210,49 @@ class Dashboard extends Component {
         }
         else if (this.state.activeTab === '3'){
             if(this.state.userInfo){
+
                 return (
                     <div className="col-9 px-5 pb-5">
                         <form className='form-group'>
                             <div className="my-3 form-row">
                                 <div className="col">
                                     <h5>First Name</h5>
-                                    <input ref={(input) => {this.firstName = input}} type='text' value={this.state.userInfo.firstName} className='form-control'/>
+                                    <input onChange={(e) => {this.setState({userInfo: {firstName: e.target.value, lastName: this.state.userInfo.lastName, city: this.state.userInfo.city, province:this.state.userInfo.province, phoneNumber:this.state.userInfo.phoneNumber, zipCode:this.state.userInfo.zipCode , shippingAddress: this.state.userInfo.shippingAddress}})}} 
+                                    type='text' value={this.state.userInfo.firstName} className='form-control'/>
                                 </div>
                                 <div className="col">
                                     <h5>Last Name</h5>
-                                    <input ref={(input) => {this.lastName = input}} type='text' value={this.state.userInfo.lastName} className='form-control'/>
+                                    <input onChange={(e) => {this.setState({userInfo: {firstName: this.state.userInfo.firstName, lastName: e.target.value, city: this.state.userInfo.city, province:this.state.userInfo.province, phoneNumber:this.state.userInfo.phoneNumber, zipCode:this.state.userInfo.zipCode , shippingAddress: this.state.userInfoshippingAddress}})}}
+                                    type='text' value={this.state.userInfo.lastName} className='form-control'/>
                                 </div>
                             </div>
                             
                             <div className="my-3 form-row">
                                 <div className="col">
                                     <h5>Shipping Address</h5>
-                                    <input ref={(input) => {this.shipping = input}} type='text' value={this.state.userInfo.shippingAddress} className='form-control'/>
+                                    <input onChange={(e) => {this.setState({userInfo: {firstName: this.state.userInfo.firstName, lastName: this.state.userInfo.lastName, city: this.state.userInfo.city, province:this.state.userInfo.province, phoneNumber:this.state.userInfo.phoneNumber, zipCode:this.state.userInfo.zipCode , shippingAddress: e.target.value}})}} 
+                                    type='text' value={this.state.userInfo.shippingAddress} className='form-control'/>
                                 </div>
                             </div>
 
                             <div className="my-3 form-row">
                                 <div className="col">
                                     <h5>City</h5>
-                                    <input ref={(input) => {this.city = input}} value={this.state.userInfo.city} type='text' className='form-control'/>
+                                    <input onChange={(e) => {this.setState({userInfo: {firstName: this.state.userInfo.firstName, lastName: this.state.userInfo.lastName, city: e.target.value, province:this.state.userInfo.province, phoneNumber:this.state.userInfo.phoneNumber, zipCode:this.state.userInfo.zipCode , shippingAddress: this.state.userInfo.shippingAddress}})}} 
+                                    type='text' value={this.state.userInfo.city} className='form-control'/>
                                 </div>
                             </div>
 
                             <div className="my-3 form-row">
                                 <div className="col-8">
                                     <h5>State / Province</h5>
-                                    <input ref={(input) => {this.province = input}} value={this.state.userInfo.province} type='text' className='form-control'/>
+                                    <input onChange={(e) => {this.setState({userInfo: {firstName: this.state.userInfo.firstName, lastName: this.state.userInfo.lastName, city: this.state.userInfo.city, province: e.target.value, phoneNumber:this.state.userInfo.phoneNumber, zipCode:this.state.userInfo.zipCode , shippingAddress: this.state.userInfoshippingAddress}})}} 
+                                    type='text' value={this.state.userInfo.province} className='form-control'/>
                                 </div>
                                 <div className="col-4">
                                     <h5>Zip Code</h5>
-                                    <input ref={(input) => {this.zipCode = input}} value={this.state.userInfo.zipCode}  type='text' className='form-control'maxLength={10}/>
+                                    <input onChange={(e) => {this.setState({userInfo: {firstName: this.state.userInfo.firstName, lastName: this.state.userInfo.lastName, city: this.state.userInfo.city, province:this.state.userInfo.province, phoneNumber:this.state.userInfo.phoneNumber, zipCode: e.target.value , shippingAddress: this.state.userInfoshippingAddress}})}} 
+                                    type='text' value={this.state.userInfo.zipCode} className='form-control'maxLength={10}/>
                                 </div>
                             </div>
 
@@ -210,7 +270,8 @@ class Dashboard extends Component {
                             <div className="my-3 form-row">
                                 <div className="col">
                                     <h5>Phone Number</h5>
-                                    <input ref={(input) => {this.phoneNumber = input}} value={this.state.userInfo.phoneNumber} type='text' className='form-control' maxLength={15}/>
+                                    <input onChange={(e) => {this.setState({userInfo: {firstName: this.state.userInfo.firstName, lastName: this.state.userInfo.lastName, city: this.state.userInfo.city, province:this.state.userInfo.province, phoneNumber:e.target.value, zipCode:this.state.userInfo.zipCode , shippingAddress: this.state.userInfoshippingAddress}})}}
+                                    type='text' value={this.state.userInfo.phoneNumber} className='form-control' maxLength={15}/>
                                 </div>
                             </div>
                         </form>
@@ -224,10 +285,6 @@ class Dashboard extends Component {
                         </div>
                     </div>
                 )
-            }
-
-            else if (this.state.activeTab === '4'){
-                
             }
 
             else {
@@ -301,6 +358,79 @@ class Dashboard extends Component {
             }
             
         }
+
+        else if (this.state.activeTab === '4'){
+            if(this.state.orders[0]){
+                return(
+                    <div className="col-9 px-5 pb-5">
+
+                    <div className='my-3 row'>
+                        <div className='col'>
+                            <h5>Order Id :</h5>
+                            <h5 className='font-weight-light'>{this.state.orders[0].orderId}</h5>
+                        </div>
+                    </div>
+
+                    <div className='my-3 row'>
+                        <div className='col'>
+                            <h5>Products</h5>
+                        </div>
+                    </div>
+
+                    <Table className="text-center" bordered responsive style={{height: '500px'}}>
+                        <thead className='thead-dark'>
+                            <tr>
+                                <th>NAME</th>
+                                <th>COLOR</th>
+                                <th>SIZE</th>
+                                <th>QUANTITY</th>
+                                <th>IMAGE</th>
+                            </tr>
+                        </thead>
+                        {this.renderList()}
+                    </Table>
+
+                    <div className='my-3 row'>
+                        <div className='col'>
+                            <h5>Shipment Address :</h5>
+                            <h5 className='font-weight-light'>{this.state.userInfo.shippingAddress}</h5>
+                        </div>
+
+                        <div className='col'>
+                            <h5>Shipment Status :</h5>
+                            <h5 className='font-weight-light'>{this.state.orders[0].shippingStatus}</h5>
+                        </div>
+                    </div>
+
+                    <div className='my-3 row'>
+                    <div className='col'>
+                            <h5>Total Quantity :</h5>
+                            <h5 className='font-weight-light'>{this.state.transaction.totalQuantity}</h5>
+                        </div>
+                        <div className='col'>
+                            <h5>Total Payment :</h5>
+                            <h5 className='font-weight-light'>{this.state.transaction.currency} {this.state.transaction.totalPayment}</h5>
+                        </div>
+                    </div>
+                </div>
+                )
+            }
+
+            else{
+                return(
+                    <div className="col-9 px-5 pb-5">
+        
+                        <div className='my-3 row'>
+                            <div className='col'>
+                                <h5>No Orders</h5>
+                            </div>
+                        </div>
+
+                    </div>
+                )
+            }
+        }
+
         else {}
     }
 
@@ -313,39 +443,41 @@ class Dashboard extends Component {
                 <div className="mx-5 my-5 border border-dark" style={{paddingLeft: '15px', paddingRight: '15px'}}>
                     <h4 className='font-weight-bold pt-2'>Dashboard</h4>
                     <Nav tabs>
-                        {/* Manage Products */}
-                        <NavItem>
+                        {/* Manage Variants */}
+                        <NavItem style={{cursor: 'pointer'}}>
                             <NavLink 
                             className={classnames({ active : this.state.activeTab === '1'})}
                             onClick={() => {this.setState({activeTab : '1'})}}>
-                                ManageProducts
+                                Variant Lists
                             </NavLink>
                         </NavItem>
                 
                         
-                        {/* Analytics */}
-                        <NavItem>
+                        {/* Manage Products */}
+                        <NavItem style={{cursor: 'pointer'}}>
                             <NavLink 
                             className={classnames({ active : this.state.activeTab === '2'})}
                             onClick={() => {this.setState({activeTab : '2'})}}>
-                                Analytics
+                                Product Lists
                             </NavLink>
                         </NavItem>
 
                         {/* Order */}
-                        <NavItem>
+                        <NavItem style={{cursor: 'pointer'}}>
                             <NavLink 
                             className={classnames({ active : this.state.activeTab === '3'})}
                             onClick={() => {this.setState({activeTab : '3'})}}>
                                 Orders
                             </NavLink>
                         </NavItem>
+                        
                     </Nav>
                     <TabContent activeTab={this.state.activeTab}>
                         <TabPane tabId="1">
-                            <ManageProducts/>
+                            <ManageVariants/>
                         </TabPane>
                         <TabPane tabId="2">
+                            <ManageProducts/>
                         </TabPane>
                         <TabPane tabId="3">
                             <Transactions/>

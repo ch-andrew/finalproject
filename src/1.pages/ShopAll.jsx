@@ -56,14 +56,19 @@ class ShopAll extends Component {
 
     render() {
         return (
-            <div style={{fontFamily : 'Roboto'}}>
+            <div className='my-5' style={{fontFamily : 'Roboto'}}>
                 <div className='row'>
                     <h1 className='col-12 text-center'>ALL PRODUCTS</h1>
-                    <div className='col-3 mt-3'>
+                    {/* <div className='col-3 mt-3 px-5'>
+                        <div className='row' style={{border: '2px solid #1a1a1a', height: '300px'}}>
+                            <div className='col-12 my-5'>
+                                <h5 className='ml-5'>Men's</h5>
+                            </div>
 
-                    </div>
+                        </div>
+                    </div> */}
 
-                    <div className="row col-9">
+                    <div className="row col-12">
                         {this.renderList()}
                     </div>
                 </div>

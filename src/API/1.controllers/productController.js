@@ -3,18 +3,35 @@ const db = require('../database')
 module.exports = {
     getList: (req, res) => {
 
-        let sql = `select id, products.name, description, c.name as category, gender, color, image, IDR, SGD, MYR from products
+        let sql = `select id, products.name, description, c.name as category, gender, color, image, IDR, SGD, MYR, variantId from products
                     join variants v on v.productId = products.id
                     join prices p on p.productId = products.id
                     join categories c on c.catId = products.categoryId`
 
-        db.query(sql, (err,result) => {
-            if(err) throw err
-            res.send({
-                status : '200',
-                products : result
-            })
-        })  
+        let sql2 = `select id, products.name, description, c.name as category, gender, defaultImage, IDR, SGD, MYR from products
+                    join prices p on p.productId = products.id
+                    join categories c on c.catId = products.categoryId`
+
+        if(req.query.input === 'variants'){
+
+            db.query(sql, (err,result) => {
+                if(err) throw err
+                res.send({
+                    status : '200',
+                    products : result
+                })
+            })  
+        }
+
+        if(req.query.input === 'main'){
+            db.query(sql2, (err,result) => {
+                if(err) throw err
+                res.send({
+                    status : '200',
+                    products : result
+                })
+            })  
+        }
         
     },
 
@@ -71,6 +88,21 @@ module.exports = {
                     join prices p on p.productId = products.id
                     join categories c on c.catId = products.categoryId
                     where categoryId in (select catId from categories where gender = 'Women')`
+        
+        db.query(sql, (err,result) => {
+            if(err) throw err
+            res.send({
+                status : '200',
+                products : result
+            })
+        })
+    },
+
+    getNewProducts: (req, res) => {
+        let sql = `select id, products.name, description, c.name as category, gender, IDR, SGD, MYR, defaultImage from products 
+                    join prices p on p.productId = products.id
+                    join categories c on c.catId = products.categoryId
+                    where categoryId in (select catId from categories where gender = 'Men')`
         
         db.query(sql, (err,result) => {
             if(err) throw err
@@ -229,15 +261,59 @@ module.exports = {
         }
     },
 
-    test : (req, res) => {
-        let sql = `select id from products where name = 'Sketchy Cat Skull'`
+    deleteProduct: (req,res) => {
+        let sql = `delete from variants where variantId = ${req.body.id}`
 
+        let sql2 = `delete from products where id = ${req.body.id}`
+        
+
+        if(req.body.input === 'variants'){
+        
+            db.query(sql, (err, result) => {
+                if(err) throw err
+                res.send(result)
+            })
+        }
+
+        if(req.body.input === 'main'){
+            db.query(sql2, (err, result) => {
+                if(err) throw err
+                res.send(result)
+            })
+        }
+    },
+
+    editProduct: (req, res) => {
+        let sql = `select catId from categories where name = '${req.body.catName}' and gender = '${req.body.gender}'`
+
+        console.log(req.body)
+        
         db.query(sql, (err, result) => {
             if(err) throw err
-            res.send(
-                result
-            )
+            if(result){
+                console.log(req.body.name);
+                
+                let sql2 = `update products set name = '${req.body.name}' , description = '${req.body.description}',
+                            defaultImage = '${req.body.defaultImage}' , categoryId = ${result[0].catId} where id = ${req.body.productId}`
+                
+                db.query(sql2, (err2, result2) => {
+                    if(err2) throw err2
+                    let sql3 = `select id from products where name = '${req.body.name}'`
+                    
+                    db.query(sql3 , (err3, result3) => {
+                        if(err3) throw err3
+                        console.log(result3[0].id);
+                        
+                        let sql4 = `update prices set IDR = '${req.body.IDR}', MYR = '${req.body.MYR}', SGD = '${req.body.SGD}' where productId = ${result3[0].id}`
+
+                        db.query(sql4 , (err4, result4) => {
+                            if(err4) throw err4
+                            res.send(result4)
+                        })
+                    })
+                })
+            }
         })
-    },
+    }
 
 }

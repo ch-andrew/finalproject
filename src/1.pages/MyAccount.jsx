@@ -13,7 +13,6 @@ class MyAccount extends Component {
             return (
                 <div style={{fontFamily: "Roboto"}}>
                     <h1 className="text-center pt-5">My Account</h1>
-                    <button onClick={this.props.onLogOut}>LogOut</button>
                     <Dashboard/>
                     <Footer/>
                 </div>

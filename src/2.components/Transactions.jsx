@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import Axios from 'axios'
 import {connect} from 'react-redux'
 import {Redirect} from 'react-router-dom'
+import {Table} from 'reactstrap'
 
 
 class Transactions extends Component {
@@ -29,55 +30,117 @@ class Transactions extends Component {
     onApprove = (id) => {
         Axios.post(`http://localhost:2077/transaction/status` , {
             input: 'Approve',
-            id
+            tId : id
+        }).then(res => {
+            this.getData()
         })
     }
 
     onReject = (id) => {
         Axios.post(`http://localhost:2077/transaction/status` , {
             input: 'Reject',
-            id
+            tId : id
+        }).then(res => {
+            this.getData()
         })
+    }
+
+    onDelete = (id) => {
+        Axios.post(`http://localhost:2077/transaction/status` , {
+            input: 'Delete',
+            tId : id
+        }).then(res => {
+            this.getData()
+        })
+    }
+
+    onShip = (id) => {
+        Axios.post(`http://localhost:2077/transaction/status` , {
+            input: 'Ship',
+            tId : id
+        }).then(res => {
+            this.getData()
+        })
+    }
+
+    onComplete = (id) => {
+        Axios.post(`http://localhost:2077/transaction/status` , {
+            input: 'Complete',
+            tId : id
+        }).then(res => {
+            this.getData()
+        })
+    }
+
+    renderStatus = (status, transactionId) => {
+        if(status === 'Approved'){
+            return (
+                <>
+                    <button className="btn btn-success" onClick={() => this.onShip(transactionId)}>
+                        Ship
+                    </button>
+                </>
+            )
+        }
+
+        else if(status === 'Rejected'){
+            return(
+                <>
+                    <button className="btn btn-danger" onClick={() => this.onDelete(transactionId)}>
+                        Delete
+                    </button>
+                </>
+            )
+        }
+
+        else if(status === 'On Shipment'){
+            return (
+                <>
+                    <button className="btn btn-success" onClick={() => this.onComplete(transactionId)}>
+                        Complete
+                    </button>
+                </>
+            )
+        }
+
+        else if(status === 'Completed'){
+            return (
+                <>
+                </>
+            )
+        }
+
+        else {
+            return(
+                <>
+                    <button className="btn btn-success" onClick={() => this.onApprove(transactionId)}>
+                        Approve
+                    </button>
+                    <button className="btn btn-warning" onClick={() => this.onReject(transactionId)} style={{color: 'white'}}>
+                        Reject
+                    </button>
+                </>
+            )
+        }
     }
 
     renderList = () => {
 
         return this.state.transactions.map((item) => {
             return (
-                <div key={item.transactionId} className='col row'>
-                    <div className='col'>
-                        {item.email}
-                    </div>
-                    <div className='col'>
-                        {item.paymentDeadline}
-                    </div>
-                    <div className='col'>
-                        {item.accHolderName}
-                    </div>
-                    <div className='col'>
-                        {item.accNumber}
-                    </div>
-                    <div className='col'>
-                        {item.accBank}
-                    </div>
-                    <div className='col'>
-                        {item.totalPayment.toLocaleString('id')}
-                    </div>
-                    <div className='col'>
-                        <img src={'http://localhost:2077/files/' + item.paymentProof} alt={item.paymentProof} style={{width: '50px'}}/>
-                    </div>
-                    <div className='col'>
-                        {item.status}
-                    </div>
-                    <div className='col'>
-                        <button className="btn btn-success" onClick={() => this.onApprove(item.id)}>
-                            Approve
-                        </button>
-                        <button className="btn btn-warning" style={{color: 'white'}}>
-                            Reject
-                        </button>
-                    </div>
-                </div>
+                <tbody key={item.transactionId}>
+                    <td>{item.email}</td>
+                    <td>{item.paymentDeadline}</td>
+                    <td>{item.accHolderName}</td>
+                    <td>{item.accNumber}</td>
+                    <td>{item.accBank}</td>
+                    <td>{item.totalPayment.toLocaleString('id')}</td>
+                    <td><img src={'http://localhost:2077/files/' + item.paymentProof} alt={item.paymentProof} style={{width: '50px'}}/></td>
+                    <td>{item.status}</td>
+                    <td>
+                    {this.renderStatus(item.status, item.transactionId)}
+                    </td>
+                </tbody>
             )
         })
     }
@@ -85,41 +148,23 @@ class Transactions extends Component {
     render() {
         if(this.props.account === 'admin'){
             return (
-                <div className=''>
-                    <div className='row'>
-                        <div className='col'>
-                            Email
-                        </div>
-                        <div className='col'>
-                            Deadline
-                        </div>
-                        <div className='col'>
-                            Account Holder's Name
-                        </div>
-                        <div className='col'>
-                            Account Number
-                        </div>
-                        <div className='col'>
-                            Bank
-                        </div>
-                        <div className='col'>
-                            Total
-                        </div>
-                        <div className='col'>
-                            Proof
-                        </div>
-                        <div className='col'>
-                            Status
-                        </div>
-                        <div className='col'>
-                            Action
-                        </div>
-                    </div>
-                    <div className='row'>
-
-                        {this.renderList()}
-                    </div>
-                </div>
+                <Table className=''>
+                    <thead className='thead-dark'>
+                        <tr>
+                            <th>Email</th>
+                            <th>Deadline</th>
+                            <th>Acc Name</th>
+                            <th>Acc Number</th>
+                            <th>Bank</th>
+                            <th>Total</th>
+                            <th>Proof</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                            
+                        </tr>
+                    </thead>
+                    {this.renderList()}
+                </Table>
             )
         }
 

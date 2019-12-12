@@ -20,6 +20,8 @@ router.get('/price/:id' , productController.getPrice)
 
 router.get('/detail/:id' , productController.getProduct)
 
-router.get('/test' , productController.test)
+router.post('/delete' , productController.deleteProduct)
+
+router.put('/edit' , productController.editProduct)
 
 module.exports = router

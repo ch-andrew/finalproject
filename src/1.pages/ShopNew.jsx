@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import Footer from '../Footer'
-import ProductItem from '../ProductItem'
+import Footer from './Footer'
+import ProductItem from './ProductItem'
 
 import Axios from 'axios'
 
-class ShopMen extends Component {
+class ShopNew extends Component {
     state = {
         products: [],
         variants: [],
@@ -19,30 +19,19 @@ class ShopMen extends Component {
 
     getData = () => {
         Axios.get(
-            'http://localhost:2077/products/men'
+            'http://localhost:2077/products/all', {
+                params:{
+                    input : 'New Arrivals'
+                }
+            }
 
         ).then(res => {
             this.setState(
                 {
-                    products: res.data.products,
-                    variants : res.data.variants,
+                    products: res.data.new,
                 }
             )
 
-            Axios.get(
-                'http://localhost:2077/products/pricelist'
-            ).then(res => {
-                this.setState(
-                    {
-                        prices : res.data.pricelist
-                    }
-                )
-            }).catch(err => {
-                console.log(err);
-            })
-
-        }).catch(err => {
-            console.log(err)
         })
     }
 
@@ -57,7 +46,7 @@ class ShopMen extends Component {
         return (
             <div className='my-5' style={{fontFamily : 'Roboto'}}>
                 <div className='row'>
-                    <h1 className='col-12 text-center'>MEN'S</h1>
+                    <h1 className='col-12 text-center'>Newest Arrivals</h1>
                     {/* <div className='col-3 mt-3'>
 
                     </div> */}
@@ -73,4 +62,4 @@ class ShopMen extends Component {
 }
 
 
-export default ShopMen
+export default ShopNew
